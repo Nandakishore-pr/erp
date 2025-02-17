@@ -1,46 +1,81 @@
+from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
-from django.shortcuts import redirect, render
-from django.views.decorators.csrf import csrf_exempt
-import json
+from django.contrib import messages
 from .models import CustomUser, Profile
 
-@csrf_exempt
 def register(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
-        username = data.get('username')
-        email = data.get('email')
-        phone_number = data.get('phone_number')
-        password = data.get('password')
-        house_number = data.get('house_number')
-        ward_number = data.get('ward_number')
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        phone_number = request.POST.get('phone_number')
+        password = request.POST.get('password')
+        house_number = request.POST.get('house_number')
+        ward_number = request.POST.get('ward_number')
 
+        # Ensure email is provided
+        if not email:
+            messages.error(request, 'Email is required.')
+            return redirect('register')
+
+        # Check if user exists
         if CustomUser.objects.filter(username=username).exists():
-            return render(request, 'register.html', {'error': 'Username already taken'})
-        if CustomUser.objects.filter(email=email).exists():
-            return render(request, 'register.html', {'error': 'Email already taken'})
-        if CustomUser.objects.filter(phone_number=phone_number).exists():
-            return render(request, 'register.html', {'error': 'Phone number already taken'})
+            messages.error(request, 'Username already taken')
+            return redirect('register')
 
-        user = CustomUser.objects.create_user(username=username, email=email, phone_number=phone_number, password=password)
+        if CustomUser.objects.filter(email=email).exists():
+            messages.error(request, 'Email already taken')
+            return redirect('register')
+
+        if CustomUser.objects.filter(phone_number=phone_number).exists():
+            messages.error(request, 'Phone number already taken')
+            return redirect('register')
+
+        # Create the user
+        user = CustomUser.objects.create_user(
+            username=username, 
+            email=email, 
+            phone_number=phone_number, 
+            password=password
+        )
         Profile.objects.create(user=user, house_number=house_number, ward_number=ward_number)
 
-        return redirect('home')  # Redirect to home page after successful registration
+        messages.success(request, 'Registration successful. Please log in.')
+        return redirect('login')
 
-@csrf_exempt
+    return render(request, 'user/register.html')
+
+
 def login_view(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
-        username = data.get('username')
-        password = data.get('password')
+        username = request.POST.get('username')
+        password = request.POST.get('password')
 
-        user = authenticate(username=username, password=password)
+        user = authenticate(request, username=username, password=password)
+
         if user is not None:
-            login(request, user)  # Logs in the user
-            return redirect('home')  # Redirects to the home page after login
+            login(request, user)
+            return redirect('home')  
         else:
-            return render(request, 'login.html', {'error': 'Invalid credentials'})
+            messages.error(request, 'Invalid credentials')
+            return redirect('login')
+
+    return render(request, 'user/login.html')
 
 
 def home(request):
-    return render(request, 'base.html')  
+    return render(request, 'user/home.html')  
+
+
+def engineer(request):
+    return render(request, 'user/engineer.html')  
+
+
+def report(request):
+    return render(request, 'user/report.html')  
+
+
+def about(request):
+    return render(request, 'user/about.html') 
+
+def employee(request):
+    return render(request, 'user/employee.html') 
