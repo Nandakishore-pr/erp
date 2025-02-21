@@ -1,0 +1,104 @@
+{% extends "engineer/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-primary fw-bold">Document Workflow</h2>
+
+    <!-- Pending Document Reviews -->
+    <div class="card shadow mb-4 border-0 rounded">
+        <div class="card-header bg-primary text-white fw-bold">Pending Document Reviews</div>
+        <div class="card-body">
+            <table class="table table-hover text-center align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Document ID</th>
+                        <th>Title</th>
+                        <th>Submitted By</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                        <th>Suggestion </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>DOC-001</td>
+                        <td>Project Blueprint</td>
+                        <td>John Doe</td>
+                        <td><span class="badge bg-warning text-dark">Pending</span></td>
+                        <td><button class="btn btn-info btn-sm">Review</button></td>
+                    </tr>
+                    <tr>
+                        <td>DOC-002</td>
+                        <td>Safety Guidelines</td>
+                        <td>Jane Smith</td>
+                        <td><span class="badge bg-success">Approved</span></td>
+                        <td><button class="btn btn-secondary btn-sm" disabled>Reviewed</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Assign Employees for Review -->
+    <div class="card shadow mb-4 border-0 rounded">
+        <div class="card-header bg-success text-white fw-bold">Assign Employees for Review</div>
+        <div class="card-body">
+            <form>
+                <div class="mb-3">
+                    <label for="documentSelect" class="form-label fw-bold">Select Document</label>
+                    <select class="form-select" id="documentSelect">
+                        <option value="1">Project Blueprint</option>
+                        <option value="2">Safety Guidelines</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Select Employees</label>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <input class="form-check-input" type="checkbox" id="employee1">
+                            <label class="form-check-label" for="employee1">John Doe</label>
+                        </div>
+                        <div class="col-md-4">
+                            <input class="form-check-input" type="checkbox" id="employee2">
+                            <label class="form-check-label" for="employee2">Jane Smith</label>
+                        </div>
+                        <div class="col-md-4">
+                            <input class="form-check-input" type="checkbox" id="employee3">
+                            <label class="form-check-label" for="employee3">Michael Brown</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="docTitle" class="form-label fw-bold">Document Title</label>
+                            <input type="text" class="form-control" id="docTitle" placeholder="Enter document title">
+                        </div>
+                        <div class="mb-3">
+                            <label for="suggestionText" class="form-label fw-bold">Your Suggestions</label>
+                            <textarea class="form-control" id="suggestionText" rows="4" placeholder="Provide your feedback here..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-warning text-dark">Submit Suggestion</button>
+                    </form>
+                </div>
+                <button type="submit" class="btn btn-primary">Assign</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Suggestion Form -->
+
+</div>
+
+<style>
+    .container {
+        max-width: 1000px;
+    }
+    .card {
+        border-radius: 10px;
+    }
+    .btn {
+        border-radius: 20px;
+    }
+</style>
+{% endblock content %}

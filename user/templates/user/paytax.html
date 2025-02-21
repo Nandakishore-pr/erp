@@ -3,20 +3,18 @@
 <div class="container mt-5 mb-5">
     <div class="row justify-content-center">
         <div class="col-lg-6 col-md-8 col-sm-10">
-            <h2 class="text-center text-primary fw-bold mb-4">Complaint Registration</h2>
+            <h2 class="text-center text-primary fw-bold mb-4">Tax Payment</h2>
             <div class="card shadow-lg p-4 border-0 rounded-4">
-                <form method="POST" enctype="multipart/form-data">
+                <form method="POST">
                     {% csrf_token %}
 
                     <div class="mb-3">
-                        <label for="category" class="form-label fw-bold">Complaint Category</label>
-                        <select class="form-select shadow-sm" id="category" name="category" required>
-                            <option value="" disabled selected>Select Category</option>
-                            <option value="Road">Road Issues</option>
-                            <option value="Drainage">Drainage Problems</option>
-                            <option value="Water">Water Supply Issues</option>
-                            <option value="Electricity">Electricity Complaints</option>
-                            <option value="Waste">Waste Management</option>
+                        <label for="tax_type" class="form-label fw-bold">Tax Type</label>
+                        <select class="form-select shadow-sm" id="tax_type" name="tax_type" required>
+                            <option value="" disabled selected>Select Tax Type</option>
+                            <option value="Property">Property Tax</option>
+                            <option value="Water">Water Tax</option>
+                            <option value="Professional">Professional Tax</option>
                             <option value="Other">Other</option>
                         </select>
                     </div>
@@ -37,17 +35,34 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="image" class="form-label fw-bold">Upload Image (Optional)</label>
-                        <input type="file" class="form-control shadow-sm" id="image" name="image" accept="image/*">
+                        <label for="email" class="form-label fw-bold">Email</label>
+                        <input type="email" class="form-control shadow-sm" id="email" name="email" placeholder="Enter Your Email" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="description" class="form-label fw-bold">Complaint Description</label>
-                        <textarea class="form-control shadow-sm" id="description" name="description" rows="4" placeholder="Describe the issue in detail..." required></textarea>
+                        <label for="address" class="form-label fw-bold">Address</label>
+                        <textarea class="form-control shadow-sm" id="address" name="address" rows="2" placeholder="Enter Your Address" required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="amount" class="form-label fw-bold">Tax Amount (₹)</label>
+                        <input type="number" class="form-control shadow-sm" id="amount" name="amount" placeholder="Enter Tax Amount" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="payment_method" class="form-label fw-bold">Payment Method</label>
+                        <select class="form-select shadow-sm" id="payment_method" name="payment_method" required>
+                            <option value="" disabled selected>Select Payment Method</option>
+                            <option value="UPI">UPI</option>
+                            <option value="Credit Card">Credit Card</option>
+                            <option value="Debit Card">Debit Card</option>
+                            <option value="Net Banking">Net Banking</option>
+                            <option value="Cash">Cash</option>
+                        </select>
                     </div>
 
                     <div class="text-center">
-                        <button type="submit" class="btn btn-success w-100 fw-bold shadow-sm">Submit Complaint</button>
+                        <button type="submit" class="btn btn-success w-100 fw-bold shadow-sm">Pay Now</button>
                     </div>
                 </form>
             </div>

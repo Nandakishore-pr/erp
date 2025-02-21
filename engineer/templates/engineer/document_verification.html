@@ -1,0 +1,105 @@
+{% extends "engineer/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-primary fw-bold text-center">📜 Document Verification</h2>
+
+    <!-- Uploaded Documents List -->
+    <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+        <div class="card-header bg-gradient text-white fw-bold text-center" style="background: linear-gradient(45deg, #007bff, #6610f2);">
+            <h5 class="mb-0">📄 Uploaded Documents</h5>
+        </div>
+        <div class="card-body p-4">
+            <table class="table table-hover table-bordered text-center align-middle shadow-sm">
+                <thead class="table-dark">
+                    <tr>
+                        <th>📑 Document ID</th>
+                        <th>📌 Title</th>
+                        <th>👤 Uploaded By</th>
+                        <th>📊 Status</th>
+                        <th>⚡ Action</th>
+                        <th>💬 Chat</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>DOC-101</td>
+                        <td>Building Plan</td>
+                        <td>Alice Johnson</td>
+                        <td><span class="badge bg-warning text-dark">⏳ Pending</span></td>
+                        <td>
+                            <button class="btn btn-success btn-sm px-3 rounded-pill">✔ Approve</button>
+                            <button class="btn btn-danger btn-sm px-3 rounded-pill">✖ Reject</button>
+                        </td>
+                        <td>
+                            <button class="btn btn-info btn-sm px-3 rounded-pill" onclick="openChat('Building Plan')">💬 Chat</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>DOC-102</td>
+                        <td>Environmental Report</td>
+                        <td>Bob Smith</td>
+                        <td><span class="badge bg-success">✅ Approved</span></td>
+                        <td>
+                            <button class="btn btn-secondary btn-sm px-3 rounded-pill" disabled>✔ Reviewed</button>
+                        </td>
+                        <td>
+                            <button class="btn btn-info btn-sm px-3 rounded-pill" onclick="openChat('Environmental Report')">💬 Chat</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Chat Box Modal -->
+<div class="modal fade" id="chatModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg rounded-4">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">💬 Discussion - <span id="docTitle"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body bg-light">
+                <div id="chatBox" class="border p-3 rounded-3 shadow-sm" style="height: 300px; overflow-y: auto; background:#ffffff;">
+                    <p class='text-muted text-center'>Fetching chat history...</p>
+                </div>
+                <div class="input-group mt-3">
+                    <input type="text" id="chatInput" class="form-control rounded-start-pill" placeholder="Type a message...">
+                    <button class="btn btn-primary rounded-end-pill" onclick="sendMessage()">📩 Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .container { max-width: 1100px; }
+    .card { border-radius: 15px; transition: transform 0.3s ease-in-out; }
+    .card:hover { transform: scale(1.02); }
+    .btn { transition: all 0.3s ease-in-out; }
+    .btn:hover { opacity: 0.8; }
+    .table-hover tbody tr:hover { background: #f8f9fa; }
+</style>
+
+<script>
+    function openChat(docTitle) {
+        document.getElementById("docTitle").innerText = docTitle;
+        let chatBox = document.getElementById("chatBox");
+        chatBox.innerHTML = "<p class='text-muted text-center'>Fetching chat history...</p>";
+        new bootstrap.Modal(document.getElementById("chatModal")).show();
+    }
+    
+    function sendMessage() {
+        let input = document.getElementById("chatInput");
+        let message = input.value.trim();
+        if (message) {
+            let chatBox = document.getElementById("chatBox");
+            chatBox.innerHTML += `<div class='text-end'><p class='bg-light p-2 rounded shadow-sm'>${message}</p></div>`;
+            input.value = "";
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    }
+</script>
+{% endblock content %}
