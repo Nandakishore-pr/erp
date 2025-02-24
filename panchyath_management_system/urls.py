@@ -21,5 +21,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include("user.urls")),
     path('engineer/',include("engineer.urls")),
-    path('clerk/', include("clerk.urls"))
+    path('clerk/', include("clerk.urls")),
+    path('ad/',include("panchayath_ad.urls")),
+    path('auth/',include("common.urls"))
 ]
+
+

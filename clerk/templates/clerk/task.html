@@ -1,5 +1,100 @@
 {% extends "clerk/base.html" %}
 {% load static%}
 {% block content %}
-<h1>task<h1/>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clerk Panel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .navbar {
+            background-color: #333;
+            padding: 15px;
+            color: white;
+            text-align: center;
+            font-size: 20px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 80px auto 20px auto; /* Adjusted margin to prevent overlap */
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .task-list, .survey-form {
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #333;
+            color: white;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">Clerk Panel</div>
+    <div class="container">
+        <h2>Assigned Tasks</h2>
+        <div class="task-list">
+            <table>
+                <tr>
+                    <th>Task</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td>Survey Area A</td>
+                    <td>Inspect and report on area conditions</td>
+                    <td>Pending</td>
+                </tr>
+                <tr>
+                    <td>Survey Area B</td>
+                    <td>Collect data for project</td>
+                    <td>In Progress</td>
+                </tr>
+            </table>
+        </div>
+        <h2>Generate Survey Report</h2>
+        <div class="survey-form">
+            <form>
+                <label for="title">Report Title:</label>
+                <input type="text" id="title" name="title" required><br><br>
+                <label for="details">Details:</label><br>
+                <textarea id="details" name="details" rows="4" cols="50" required></textarea><br><br>
+                <button type="submit">Submit Report</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
 {% endblock content %}

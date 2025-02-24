@@ -1,0 +1,84 @@
+{% extends 'panchayath_officer/base.html' %}
+
+{% block title %}Engineer Management{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <h2 class="text-center mb-4">Engineer Management</h2>
+    
+    <!-- Engineer List & Evaluation -->
+    <div class="card p-3 mb-3">
+        <h5>Current Engineers</h5>
+        <table class="table table-striped" id="engineerTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>License</th>
+                    <th>Experience</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Arun Kumar</td>
+                    <td>LIC12345</td>
+                    <td>5 Years</td>
+                    <td><button class="btn btn-danger btn-sm" onclick="deleteEngineer(1)">Delete</button></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Neha Sharma</td>
+                    <td>LIC67890</td>
+                    <td>3 Years</td>
+                    <td><button class="btn btn-danger btn-sm" onclick="deleteEngineer(2)">Delete</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Engineer Requests for Approval -->
+    <div class="card p-3 mb-3">
+        <h5>Engineer Requests</h5>
+        <table class="table table-striped" id="requestTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>License</th>
+                    <th>Experience</th>
+                    <th>About</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Rahul Menon</td>
+                    <td>LIC45678</td>
+                    <td>4 Years</td>
+                    <td>Specialized in urban planning</td>
+                    <td>
+                        <button class="btn btn-success btn-sm" onclick="approveEngineer('Rahul Menon')">Approve</button>
+                        <button class="btn btn-danger btn-sm" onclick="rejectEngineer('Rahul Menon')">Reject</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function deleteEngineer(id) {
+        alert(`Engineer with ID ${id} deleted.`);
+    }
+    
+    function approveEngineer(name) {
+        alert(`${name} has been approved.`);
+    }
+    
+    function rejectEngineer(name) {
+        alert(`${name} has been rejected.`);
+    }
+</script>
+
+{% endblock %}

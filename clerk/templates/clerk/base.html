@@ -145,7 +145,7 @@
     </nav>
     <div class="sidebar">
         <h2><i class="fas fa-user-tie"></i> Clerk Dashboard</h2>
-        <a href="{% url 'home' %}" class="{% if request.path == '/clerk/editprofile/' %}active{% endif %}">
+        <a href="{% url 'clerkhome' %}" class="{% if request.path == '/clerk/editprofile/' %}active{% endif %}">
             <i class="fas fa-user-edit"></i> Dashboard
         </a>
         <a href="{% url 'editprofile' %}" class="{% if request.path == '/clerk/editprofile/' %}active{% endif %}">

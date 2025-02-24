@@ -1,0 +1,148 @@
+{% extends 'panchayath_officer/base.html' %}
+
+{% block title %}Clerk Management{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm mb-4">
+        <div class="container-fluid">
+            <span class="navbar-brand fs-4 fw-bold">Clerk Management</span>
+        </div>
+    </nav>
+    
+    <h2 class="text-center mb-4">Clerk Management</h2>
+    
+    <!-- Clerk Table with Sorting -->
+    <div class="table-responsive">
+        <table class="table table-striped" id="clerkTable">
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)">ID</th>
+                    <th onclick="sortTable(1)">Name</th>
+                    <th onclick="sortTable(2)">Working Hours</th>
+                    <th onclick="sortTable(3)">Attendance (%)</th>
+                    <th onclick="sortTable(4)">Reports Completed</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>John Doe</td>
+                    <td>40</td>
+                    <td>90%</td>
+                    <td>15</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Jane Smith</td>
+                    <td>38</td>
+                    <td>85%</td>
+                    <td>12</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Clerk Actions -->
+    <div class="btn-container mb-3">
+        <button class="btn btn-success" onclick="addRow()">Add Clerk</button>
+        <button class="btn btn-danger" onclick="deleteRow()">Delete Selected</button>
+    </div>
+    
+    <!-- Chat Feature -->
+    <div class="card p-3 mb-3">
+        <h5>Select Clerk to Chat</h5>
+        <select id="clerkChat" class="form-control mb-2">
+            <option value="1">John Doe</option>
+            <option value="2">Jane Smith</option>
+        </select>
+        <textarea class="form-control" rows="3" placeholder="Type your message..."></textarea>
+        <button class="btn btn-primary mt-2">Send</button>
+    </div>
+    
+    <!-- Leave Approvals -->
+    <div class="card p-3 mb-3">
+        <h5>Leave Approvals</h5>
+        <ul class="list-group">
+            <li class="list-group-item d-flex justify-content-between">
+                John Doe - 2 Days <button class="btn btn-success btn-sm">Approve</button> <button class="btn btn-danger btn-sm">Reject</button>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+                Jane Smith - 1 Day <button class="btn btn-success btn-sm">Approve</button> <button class="btn btn-danger btn-sm">Reject</button>
+            </li>
+        </ul>
+    </div>
+    
+    <!-- Performance Badges and Rewards -->
+    <div class="card p-3">
+        <h5>Performance Badges & Rewards</h5>
+        <ul class="list-group">
+            <li class="list-group-item">John Doe - Employee of the Month 🏆</li>
+            <li class="list-group-item">Jane Smith - Best Attendance 🎖</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    function sortTable(n) {
+        var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        table = document.getElementById("clerkTable");
+        switching = true;
+        dir = "asc";
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+            for (i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName("TD")[n];
+                y = rows[i + 1].getElementsByTagName("TD")[n];
+                if (dir == "asc" && x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                    shouldSwitch = true;
+                    break;
+                } else if (dir == "desc" && x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+                switchcount++;
+            } else {
+                if (switchcount === 0 && dir === "asc") {
+                    dir = "desc";
+                    switching = true;
+                }
+            }
+        }
+    }
+
+    function addRow() {
+        const table = document.getElementById("clerkTable").getElementsByTagName('tbody')[0];
+        const newRow = table.insertRow();
+        newRow.innerHTML = `<td>New</td>
+                            <td>New Clerk</td>
+                            <td>0</td>
+                            <td>0%</td>
+                            <td>0</td>`;
+        const email = prompt("Enter email for new clerk:");
+        if (email) {
+            sendEmail("New Clerk", email);
+        }
+    }
+
+    function deleteRow() {
+        const table = document.getElementById("clerkTable").getElementsByTagName('tbody')[0];
+        const rows = table.getElementsByTagName('tr');
+        for (let i = rows.length - 1; i >= 0; i--) {
+            table.deleteRow(i);
+        }
+    }
+
+    function sendEmail(name, email) {
+        console.log(`Sending email to ${email} with login details.`);
+        alert(`Login details sent to ${email}`);
+    }
+</script>
+
+{% endblock %}

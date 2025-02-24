@@ -1,5 +1,104 @@
 {% extends "clerk/base.html" %}
 {% load static%}
 {% block content %}
-<h1>engineer<h1/>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Engineers</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .navbar {
+            background-color: #333;
+            padding: 15px;
+            color: white;
+            text-align: center;
+            font-size: 20px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+        .container {
+            width: 80%;
+            margin: 100px auto 20px auto;
+            padding: 20px;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .carousel {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: 10px;
+            padding: 10px;
+            white-space: nowrap;
+            scrollbar-width: none;
+        }
+        .carousel::-webkit-scrollbar {
+            display: none;
+        }
+        .engineer-card {
+            flex: 0 0 auto;
+            width: 250px;
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            scroll-snap-align: start;
+        }
+        .engineer-card h3 {
+            margin: 0;
+            color: #333;
+        }
+        .engineer-card p {
+            margin: 5px 0;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">Engineers List</div>
+    <div class="container">
+        <h2>Engineers</h2>
+        <div class="carousel">
+            <div class="engineer-card">
+                <h3>John Doe</h3>
+                <p>Phone: 9876543210</p>
+                <p>Email: johndoe@example.com</p>
+            </div>
+            <div class="engineer-card">
+                <h3>Jane Smith</h3>
+                <p>Phone: 9123456789</p>
+                <p>Email: janesmith@example.com</p>
+            </div>
+            <div class="engineer-card">
+                <h3>Robert Johnson</h3>
+                <p>Phone: 9988776655</p>
+                <p>Email: robertj@example.com</p>
+            </div>
+            <div class="engineer-card">
+                <h3>Alice Brown</h3>
+                <p>Phone: 9871234567</p>
+                <p>Email: aliceb@example.com</p>
+            </div>
+            <div class="engineer-card">
+                <h3>Michael Lee</h3>
+                <p>Phone: 8765432190</p>
+                <p>Email: michaell@example.com</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
 {% endblock content %}
