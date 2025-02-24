@@ -1,0 +1,76 @@
+{% extends 'panchayath_officer/base.html' %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div class="container mt-4"> <!-- Added margin-top for spacing -->
+    <h2 class="text-center mb-4">Edit Profile</h2>
+    
+    <div class="card p-4">
+        <form id="adminProfileForm">
+            <div class="text-center mb-3">
+                <img id="profilePreview" src="https://via.placeholder.com/150" alt="Profile Picture" class="rounded-circle" width="120">
+            </div>
+
+            <div class="mb-3">
+                <label for="profilePhoto" class="form-label">Upload Profile Photo</label>
+                <input type="file" class="form-control" id="profilePhoto" accept="image/*">
+            </div>
+
+            <div class="mb-3">
+                <label for="adminName" class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="adminName" placeholder="Enter full name" value="Admin Name" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="adminEmail" class="form-label">Email Address</label>
+                <input type="email" class="form-control" id="adminEmail" placeholder="Enter email" value="admin@example.com" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="adminPhone" class="form-label">Phone Number</label>
+                <input type="text" class="form-control" id="adminPhone" placeholder="Enter phone number" value="+91 9876543210" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="adminPassword" class="form-label">New Password</label>
+                <input type="password" class="form-control" id="adminPassword" placeholder="Enter new password">
+            </div>
+
+            <div class="mb-3">
+                <label for="confirmPassword" class="form-label">Confirm Password</label>
+                <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm new password">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Update Profile</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById("profilePhoto").addEventListener("change", function(event) {
+        let file = event.target.files[0];
+        if (file) {
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById("profilePreview").src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    document.getElementById("adminProfileForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        let newPassword = document.getElementById("adminPassword").value;
+        let confirmPassword = document.getElementById("confirmPassword").value;
+        
+        if (newPassword && newPassword !== confirmPassword) {
+            alert("Passwords do not match!");
+            return;
+        }
+
+        alert("Profile Updated Successfully!"); // Placeholder for backend update function
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends "engineer/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center fw-bold text-primary mb-4">Dashboard</h2>
+
+    <!-- Statistics Section -->
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-4">
+            <div class="stat-box blue shadow-lg">Verified Documents<br><span class="fs-4">15</span></div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-box green shadow-lg">Pending Workflow<br><span class="fs-4">120</span></div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-box yellow shadow-lg">Total Stats<br><span class="fs-4">$24,000</span></div>
+        </div>
+    </div>
+
+    <!-- Chart Section -->
+    <div class="mt-5 d-flex justify-content-center">
+        <div id="chart-container">
+            <canvas id="myChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Spacing fixes */
+    .container {
+        padding-top: 70px; /* Pushes everything lower */
+    }
+
+    /* Statistics Styling */
+    .stat-box {
+        padding: 25px;
+        color: white;
+        text-align: center;
+        border-radius: 12px;
+        margin-bottom: 40px;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .blue { background: #007bff; }
+    .green { background: #28a745; }
+    .yellow { background: #ffc107; }
+
+    /* Chart Styling */
+    #chart-container {
+        width: 100%;
+        max-width: 900px; /* Larger graph */
+        height: 450px; /* Increased height */
+    }
+
+    canvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Bookings',
+                    data: [12, 19, 3, 5, 2, 3],
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    });
+</script>
+
+{% endblock content %}

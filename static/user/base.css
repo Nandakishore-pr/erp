@@ -1,25 +1,25 @@
 .navbar {
-    background-color: yellow !important; /* Sets the navbar background to yellow */
+  background-color: yellow !important; /* Sets the navbar background to yellow */
 }
 
 .navbar a, .navbar h4, .navbar h1 {
-    color: black !important; /* Makes text readable */
+  color: black !important; /* Makes text readable */
 }
 
 .dropdown .btn {
-    background-color: yellow !important; /* Yellow button */
-    border: 1px solid black; /* Optional: Adds a black border */
+  background-color: yellow !important; /* Yellow button */
+  border: 1px solid black; /* Optional: Adds a black border */
 }
 
 .dropdown-menu {
-    background-color: yellow !important; /* Yellow dropdown */
+  background-color: yellow !important; /* Yellow dropdown */
 }
 
 .dropdown-menu .dropdown-item {
-    color: black !important; /* Black text */
+  color: black !important; /* Black text */
 }
 
 .dropdown-menu .dropdown-item:hover {
-    background-color: black !important;
-    color: rgb(248, 248, 76) !important; /* Inverts colors on hover */
+  background-color: black !important;
+  color: rgb(248, 248, 76) !important; /* Inverts colors on hover */
 }

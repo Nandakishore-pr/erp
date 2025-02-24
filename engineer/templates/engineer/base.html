@@ -1,0 +1,136 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Engineer Dashboard</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'engineer/base.css' %}">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* General Layout */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        /* Sidebar Styling */
+        #sidebar {
+            width: 250px;
+            background: #343a40;
+            color: white;
+            height: 100vh;
+            padding: 20px;
+            position: fixed;
+            top: 60px; /* Adjusted to stay below the navbar */
+            left: 0;
+            overflow-y: auto;
+        }
+
+        #sidebar a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 12px;
+            margin: 5px 0;
+        }
+
+        #sidebar a:hover {
+            background: #495057;
+        }
+
+        /* Content Section */
+        #main-content {
+            margin-left: 260px; /* Leaves space for sidebar */
+            padding: 20px;
+            flex-grow: 1;
+        }
+
+        /* Footer */
+        footer {
+            background: #343a40;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            width: 100%;
+            height: 50px;
+            position: fixed;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Navbar -->
+    <nav class="navbar navbar-expand-lg text-dark px-3 bg-light shadow">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <img src="{% static 'assets/icon.png' %}" alt="Logo" class="me-2" style="height: 40px;">
+            </div>
+
+            <a href="https://www.india.gov.in/" target="_blank" rel="noopener noreferrer" class="text-dark text-decoration-none">
+                <h4 class="mb-0 fw-bold">GOVERNMENT OF INDIA</h4>
+            </a>
+
+            <h1 class="text-center flex-grow-1 main-heading fw-bold" style="font-size: 22px;">
+                The Mahatma Gandhi National Rural Employment Guarantee Act 2005
+            </h1>
+
+            <div class="d-flex align-items-center">
+                <a href="#" class="btn"><img src="{% static 'assets/icon.png' %}" alt="Search" class="icons me-3" style="height: 30px;"></a>
+                <a href="#" class="btn"><img src="{% static 'assets/icon.png' %}" alt="Notifications" class="icons me-3" style="height: 30px;"></a>
+
+                <!-- Profile Dropdown -->
+                <div class="dropdown">
+                    <button class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="{% static 'assets/profileicon.png' %}" alt="Profile" class="profile" style="height: 35px;">
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                        <li><a class="dropdown-item" href="{% url 'login' %}">Login</a></li>
+                        <li><a class="dropdown-item" href="{% url 'register' %}">Register</a></li>
+                        <li><a class="dropdown-item" href="#">Profile Details</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar Navigation -->
+    <div id="sidebar">
+        <h2>Engineer Panel</h2>
+        <a href="{% url 'engineer_home' %}">Dashboard</a>
+        <a href="{% url 'employees' %}">Employees</a>
+        <a href="{% url 'document_verification' %}">Document Verification</a>
+        <a href="{% url 'doc_wrk' %}">Document Workflow</a>
+        <a href="{% url 'engineer_editprofile' %}">Edit Profile</a>
+    </div>
+
+    <!-- Main Content Block -->
+    <div id="main-content">
+        {% block content %}
+        {% endblock content %}
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p class="mb-0">&copy; 2025 Panchayat Services. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'user',
     'engineer',
-    'clerk'
+    'clerk',
+    'panchayath_ad',
+    'common',
 ]
 
 MIDDLEWARE = [

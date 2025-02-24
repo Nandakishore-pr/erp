@@ -1,0 +1,105 @@
+{% extends "clerk/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-primary fw-bold">📌 My Attendance</h2>
+
+    <div class="row">
+        <!-- Attendance Details (Left Side) -->
+        <div class="col-md-6">
+            <div class="card shadow mb-4 border-0 rounded">
+                <div class="card-header bg-primary text-white fw-bold">Today's Attendance</div>
+                <div class="card-body">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Session</th>
+                                <th>Status</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Morning (9:00 AM)</td>
+                                <td>
+                                    {% if morning_attendance %}
+                                        <span class="badge bg-success">✔ Present</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">❌ Absent</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ morning_time|default:"--:--" }}</td>
+                            </tr>
+                            <tr>
+                                <td>Afternoon (Post-Lunch)</td>
+                                <td>
+                                    {% if afternoon_attendance %}
+                                        <span class="badge bg-success">✔ Present</span>
+                                    {% else %}
+                                        <span class="badge bg-warning text-dark">Pending</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ afternoon_time|default:"--:--" }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Mark Attendance Form -->
+            <div class="card shadow mb-4 border-0 rounded">
+                <div class="card-header bg-success text-white fw-bold">Mark My Attendance</div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="attendanceType" class="form-label fw-bold">Select Session</label>
+                            <select class="form-select" id="attendanceType" name="attendance_type">
+                                <option value="morning">Morning Attendance</option>
+                                <option value="afternoon">Afternoon Attendance</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Mark Attendance</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Face Recognition (Right Side) -->
+        <div class="col-md-6 d-flex align-items-center justify-content-center">
+            <div class="face-recognition text-center">
+                <h4 class="fw-bold text-dark">Face Recognition</h4>
+                <div class="face-box shadow-sm">
+                    <img src="#" alt="Face Recognition" class="img-fluid">
+                </div>
+                <p class="mt-3 text-muted">Look into the camera to mark your attendance.</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    .container {
+        max-width: 900px;
+    }
+    .card {
+        border-radius: 10px;
+    }
+    .btn {
+        border-radius: 20px;
+    }
+    .face-box {
+        width: 300px;
+        height: 300px;
+        border: 2px solid #007bff;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f8f9fa;  
+        padding: 10px;
+    }
+</style>
+
+{% endblock content %}

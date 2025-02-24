@@ -1,0 +1,186 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Engineer Dashboard</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'clerk/base.css' %}">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* General Layout */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+        }
+/* Sidebar Styling */
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background: #1a1a2e; /* Dark Blue */
+    color: white;
+    position: fixed;
+    top: 60px;
+    left: 0;
+    padding: 20px;
+    overflow-y: auto;
+    transition: all 0.3s;
+    box-shadow: 3px 0 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Sidebar Logo & Header */
+.sidebar h2 {
+    font-size: 22px;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Sidebar Links */
+.sidebar a {
+    display: flex;
+    align-items: center;
+    color: white;
+    padding: 12px 15px;
+    font-size: 16px;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Icons inside Sidebar */
+.sidebar a i {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+/* Sidebar Hover Effects */
+.sidebar a:hover {
+    background: #0f3460; /* Lighter Dark Blue */
+    transform: translateX(5px);
+}
+
+/* Active Link */
+.sidebar a.active {
+    background: #e94560; /* Red Highlight */
+    font-weight: bold;
+}
+
+/* Adjust Main Content */
+#main-content {
+    margin-left: 270px;
+    padding: 20px;
+    transition: margin-left 0.3s;
+}
+
+        /* Content Section */
+        #main-content {
+            margin-left: 260px; /* Leaves space for sidebar */
+            padding: 20px;
+            flex-grow: 1;
+        }
+
+        /* Footer */
+        footer {
+            background: #343a40;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            width: 100%;
+            height: 50px;
+            position: fixed;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Navbar -->
+    <nav class="navbar navbar-expand-lg text-dark px-3 bg-light shadow">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <img src="{% static 'assets/icon.png' %}" alt="Logo" class="me-2" style="height: 40px;">
+            </div>
+
+            <a href="https://www.india.gov.in/" target="_blank" rel="noopener noreferrer" class="text-dark text-decoration-none">
+                <h4 class="mb-0 fw-bold">GOVERNMENT OF INDIA</h4>
+            </a>
+
+            <h1 class="text-center flex-grow-1 main-heading fw-bold" style="font-size: 22px;">
+                The Mahatma Gandhi National Rural Employment Guarantee Act 2005
+            </h1>
+
+            <div class="d-flex align-items-center">
+                <a href="#" class="btn"><img src="{% static 'assets/icon.png' %}" alt="Search" class="icons me-3" style="height: 30px;"></a>
+                <a href="#" class="btn"><img src="{% static 'assets/icon.png' %}" alt="Notifications" class="icons me-3" style="height: 30px;"></a>
+
+                <!-- Profile Dropdown -->
+                <div class="dropdown">
+                    <button class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="{% static 'assets/profileicon.png' %}" alt="Profile" class="profile" style="height: 35px;">
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                        <li><a class="dropdown-item" href="{% url 'login' %}">Login</a></li>
+                        <li><a class="dropdown-item" href="{% url 'register' %}">Register</a></li>
+                        <li><a class="dropdown-item" href="#">Profile Details</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="sidebar">
+        <h2><i class="fas fa-user-tie"></i> Clerk Dashboard</h2>
+        <a href="{% url 'clerkhome' %}" class="{% if request.path == '/clerk/editprofile/' %}active{% endif %}">
+            <i class="fas fa-user-edit"></i> Dashboard
+        </a>
+        <a href="{% url 'editprofile' %}" class="{% if request.path == '/clerk/editprofile/' %}active{% endif %}">
+            <i class="fas fa-user-edit"></i> Edit Profile
+        </a>
+        <a href="{% url 'request' %}" class="{% if request.path == '/clerk/request/' %}active{% endif %}">
+            <i class="fas fa-tasks"></i> Requests
+        </a>
+        <a href="{% url 'document' %}" class="{% if request.path == '/clerk/document/' %}active{% endif %}">
+            <i class="fas fa-file"></i> Documents
+        </a>
+        <a href="{% url 'attendance' %}" class="{% if request.path == '/clerk/attendance/' %}active{% endif %}">
+            <i class="fas fa-calendar-check"></i> Attendance
+        </a>
+        <a href="{% url 'engineer' %}" class="{% if request.path == '/clerk/engineer/' %}active{% endif %}">
+            <i class="fas fa-users-cog"></i> Engineers
+        </a>
+        <a href="{% url 'task' %}" class="{% if request.path == '/clerk/task/' %}active{% endif %}">
+            <i class="fas fa-clipboard-list"></i> Tasks
+        </a>
+    </div>
+    
+    <!-- Main Content Block -->
+    <div id="main-content">
+        {% block content %}
+        {% endblock content %}
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p class="mb-0">&copy; 2025 Panchayat Services. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
