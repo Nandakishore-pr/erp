@@ -5,10 +5,10 @@ urlpatterns = [
     
     path('admin1/', views.home, name='admindashboard'),
     path('manage/',views.manage, name='manage'),
-    path('engineer/',views.engineer, name='engineer'),
+    path('admin_engineer/',views.admin_engineer, name='admin_engineer'),
     path('revenue/', views.revenue ,name='revenue'),
-    path('task/',views.task ,name='task'),
+    path('admin_task/',views.admin_task ,name='admin_task'),
     path('notice/',views.notice ,name='notice'),
-    path('editprofile/',views.editprofile , name='editprofile'),
+    path('admineditprofile/',views.admineditprofile , name='admineditprofile'),
     ]
 

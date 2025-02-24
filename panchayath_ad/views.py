@@ -7,17 +7,17 @@ def home(request):
 def manage(request):
     return render(request,'panchayath_officer/manage.html')
 
-def engineer(request):
+def admin_engineer(request):
     return render(request,'panchayath_officer/engineer.html')
 
 def revenue(request):
     return render(request,'panchayath_officer/revenue.html')
 
-def task(request):
+def admin_task(request):
     return render(request, 'panchayath_officer/task.html')
 
 def notice(request):
     return render(request, 'panchayath_officer/notice.html')
 
-def editprofile(request):
+def admineditprofile(request):
     return render(request, 'panchayath_officer/editprofile.html')

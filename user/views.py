@@ -66,7 +66,7 @@ def home(request):
     return render(request, 'user/home.html')  
 
 
-def engineer(request):
+def user_engineer(request):
     return render(request, 'user/engineer.html')  
 
 
