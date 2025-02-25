@@ -1,5 +1,5 @@
 .navbar {
-  background-color: yellow !important; /* Sets the navbar background to yellow */
+  background-color: beige /* Sets the navbar background to yellow */
 }
 
 .navbar a, .navbar h4, .navbar h1 {
@@ -7,12 +7,12 @@
 }
 
 .dropdown .btn {
-  background-color: yellow !important; /* Yellow button */
+  background-color: rgb(188, 188, 180) !important; /* Yellow button */
   border: 1px solid black; /* Optional: Adds a black border */
 }
 
 .dropdown-menu {
-  background-color: yellow !important; /* Yellow dropdown */
+  background-color: rgb(152, 152, 147) !important; /* Yellow dropdown */
 }
 
 .dropdown-menu .dropdown-item {

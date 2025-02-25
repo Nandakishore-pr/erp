@@ -1,5 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +16,7 @@
 <body>
 
     <!-- Main Navbar -->
-    <nav class="navbar navbar-expand-lg text-dark px-3">
+    <nav class="navbar navbar-expand-lg text-dark px-5">
         <div class="container-fluid d-flex justify-content-between align-items-center">
             
             <!-- Left Section -->
@@ -34,8 +35,8 @@
 
             <!-- Right Section -->
             <div class="d-flex align-items-center">
-                <a href="#" class="btn"><img src="{% static 'assets/icon.png' %}" alt="Search" class="icons me-3" style="height: 30px;"></a>
-                <a href="#" class="btn"><img src="{% static 'assets/icon.png' %}" alt="Notifications" class="icons me-3" style="height: 30px;"></a>
+                <a href="#" class="btn"><img src="{% static 'assets/serchicon.png' %}" alt="Search" class="icons me-3" style="height: 30px;"></a>
+                <a href="#" class="btn"><img src="{% static 'assets/bellicon.png' %}" alt="Notifications" class="icons me-3" style="height: 30px;"></a>
                 <div class="dropdown">
                     <button class="btn btn-white dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                         <img src="{% static 'assets/profileicon.png' %}" alt="Profile" class="profile" style="height: 35px;">
@@ -43,7 +44,7 @@
                     <ul class="dropdown-menu dropdown-menu-dark">
                         <li><a class="dropdown-item" href="{% url 'login' %}">Login</a></li>
                         <li><a class="dropdown-item" href="{% url 'register' %}">register</a></li>
-                        <li><a class="dropdown-item" href="#">Profile Details</a></li>
+                        <li><a class="dropdown-item" href="{% url 'user_profiledetails' %}">Profile Details</a></li>
                     </ul>
                 </div>
             </div>

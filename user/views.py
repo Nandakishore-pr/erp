@@ -79,3 +79,6 @@ def about(request):
 
 def employee(request):
     return render(request, 'user/employee.html') 
+
+def user_profiledetails(request):
+    return render(request, 'user/profiledetails.html')

@@ -1,0 +1,106 @@
+{% extends "user/base.html" %}
+{% load static %}
+{% block content %}
+
+<!-- Navbar (Extends from base.html) -->
+
+<div class="container my-5">
+    <h2 class="text-center">User Profile</h2>
+
+    <!-- User Information Section -->
+    <div class="card p-3 my-4">
+        <h4>User Details</h4>
+        <p><strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Phone:</strong> {{ user.profile.phone }}</p>
+        <p><strong>Address:</strong> {{ user.profile.address }}</p>
+
+        <!-- Edit Profile Button -->
+        <a href="#" class="btn btn-primary">Edit Profile</a>
+    </div>
+
+    <!-- Tax Payment History -->
+    <div class="card p-3 my-4">
+        <h4>Tax Payment History</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Year</th>
+                    <th>Amount Paid</th>
+                    <th>Payment Date</th>
+                    <th>Receipt</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tax in taxes %}
+                <tr>
+                    <td>{{ tax.year }}</td>
+                    <td>₹{{ tax.amount }}</td>
+                    <td>{{ tax.payment_date }}</td>
+                    <td><a href="{{ tax.receipt.url }}" target="_blank">View Receipt</a></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">No tax payments found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Documents Sent to Engineer & Reports -->
+    <div class="card p-3 my-4">
+        <h4>Documents Sent to Engineers</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Document</th>
+                    <th>Submission Date</th>
+                    <th>Engineer Assigned</th>
+                    <th>Status</th>
+                    <th>Report</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for doc in documents %}
+                <tr>
+                    <td><a href="{{ doc.file.url }}" target="_blank">{{ doc.name }}</a></td>
+                    <td>{{ doc.submission_date }}</td>
+                    <td>{{ doc.engineer }}</td>
+                    <td>{{ doc.status }}</td>
+                    <td>
+                        {% if doc.report %}
+                        <a href="{{ doc.report.url }}" target="_blank">View Report</a>
+                        {% else %}
+                        Pending
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No documents found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Video Call Section for Clerk-User Interaction -->
+    <div class="card p-3 my-4">
+        <h4>Video Conference for Verification</h4>
+        <p>Click below to start a video call with the clerk.</p>
+        <button id="startCall" class="btn btn-success">Start Video Call</button>
+        <div id="videoContainer" class="mt-3" style="display: none;">
+            <iframe id="videoFrame" width="100%" height="400" src="https://meet.jit.si/{{ user.username }}" allow="camera; microphone; fullscreen" style="border: 0;"></iframe>
+        </div>
+    </div>
+</div>
+
+<!-- Video Call Script -->
+<script>
+document.getElementById("startCall").addEventListener("click", function() {
+    document.getElementById("videoContainer").style.display = "block";
+});
+</script>
+
+{% endblock content %}

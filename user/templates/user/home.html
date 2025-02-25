@@ -1,8 +1,6 @@
-
 {% extends "user/base.html" %}
 {% load static %}
 {% block content %}
-
 
 <!-- Section 1: Carousel -->
 <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
@@ -30,6 +28,22 @@
     </button>
 </div>
 
+<!-- Inline CSS -->
+<style>
+.carousel-inner img {
+    width: 100%; /* Ensures images stretch to fit the width */
+    height: 500px; /* Set a fixed height */
+    object-fit: cover; /* Ensures images maintain aspect ratio and fill the container */
+}
+.carousel-item {
+    height: 500px;
+}
+.carousel-item img {
+    height: 100%;
+    object-fit: cover;
+}
+</style>
+
 <!-- Section 2: Static Graphs -->
 <div class="container my-5">
     <div class="row">
@@ -54,8 +68,6 @@
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum facilisis eros eu metus placerat, nec gravida nisi luctus.</p>
     </div>
 </div>
-
-
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -109,6 +121,5 @@
         }
     });
 </script>
-
 
 {% endblock content %}

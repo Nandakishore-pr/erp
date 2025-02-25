@@ -1,0 +1,12 @@
+.carousel-inner img {
+    width: 100%; /* Ensures images stretch to fit the width */
+    height: 500px; /* Set a fixed height */
+    object-fit: cover; /* Ensures images maintain aspect ratio and fill the container */
+}
+.carousel-item {
+    height: 500px;
+}
+.carousel-item img {
+    height: 100%;
+    object-fit: cover;
+}
