@@ -1,9 +1,9 @@
 .navbar {
-  background-color: yellow !important; /* Sets the navbar background to yellow */
+  background-color:rgb(21,31,34)!important; /* Sets the navbar background to yellow */
 }
 
 .navbar a, .navbar h4, .navbar h1 {
-  color: black !important; /* Makes text readable */
+  color: White !important; /* Makes text readable */
 }
 
 .dropdown .btn {
