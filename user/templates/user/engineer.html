@@ -17,65 +17,30 @@
 <div class="container mt-5">
     <div class="row row-cols-1 row-cols-md-3 g-4">
 
+        {% for engineer in engineers %}
         <div class="col">
             <div class="card h-100 shadow-lg rounded-4 border-0">
-                <img src="{% static 'images/nike_air_max.jpg' %}" 
+                <img src="{% static 'assets/profileicon.png' %}" 
                      class="card-img-top" 
-                     alt="Nike Air Max" 
+                     alt="{{ engineer.user.username }}" 
                      style="height: 220px; object-fit: cover; border-top-left-radius: 12px; border-top-right-radius: 12px;">
                 <div class="card-body text-center">
-                    <h5 class="card-title text-primary fw-bold">Name</h5>
-                    <p class="card-text text-muted">Place</p>
+                    <h5 class="card-title text-primary fw-bold">{{ engineer.user.username }}</h5>
+                    <p class="card-text text-muted">{{ engineer.address }}</p>
                 </div>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item">About</li>
+                    <li class="list-group-item"><b>About:</b> {{ engineer.about }}</li>
+                    <li class="list-group-item"><b>Experience:</b> {{ engineer.experience_years }} years</li>
                 </ul>
                 <div class="card-body text-center">
-                    <a href="#" class="btn btn-success w-100 fw-bold">Go Through With Documentation</a>
+                    <a href="{% url "document_upload" %}" class="btn btn-success w-100 fw-bold">Go Through With Documentation</a>
                     <a href="#" class="btn btn-outline-primary w-100 mt-2 fw-bold">Chat</a>
                 </div>
             </div>
         </div>
-
-        <div class="col">
-            <div class="card h-100 shadow-lg rounded-4 border-0">
-                <img src="{% static 'images/adidas_ultraboost.jpg' %}" 
-                     class="card-img-top" 
-                     alt="Adidas Ultraboost" 
-                     style="height: 220px; object-fit: cover; border-top-left-radius: 12px; border-top-right-radius: 12px;">
-                <div class="card-body text-center">
-                    <h5 class="card-title text-primary fw-bold">Name</h5>
-                    <p class="card-text text-muted">Place</p>
-                </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">About</li>
-                </ul>
-                <div class="card-body text-center">
-                    <a href="#" class="btn btn-success w-100 fw-bold">Go Through With Documentation</a>
-                    <a href="#" class="btn btn-outline-primary w-100 mt-2 fw-bold">Chat</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col">
-            <div class="card h-100 shadow-lg rounded-4 border-0">
-                <img src="{% static 'images/puma_rsx.jpg' %}" 
-                     class="card-img-top" 
-                     alt="Puma RS-X" 
-                     style="height: 220px; object-fit: cover; border-top-left-radius: 12px; border-top-right-radius: 12px;">
-                <div class="card-body text-center">
-                    <h5 class="card-title text-primary fw-bold">Name</h5>
-                    <p class="card-text text-muted">Place</p>
-                </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">About</li>
-                </ul>
-                <div class="card-body text-center">
-                    <a href="#" class="btn btn-success w-100 fw-bold">Go Through With Documentation</a>
-                    <a href="#" class="btn btn-outline-primary w-100 mt-2 fw-bold">Chat</a>
-                </div>
-            </div>
-        </div>
+        {% empty %}
+        <p class="text-center text-muted">No engineers found.</p>
+        {% endfor %}
 
     </div>
 </div>

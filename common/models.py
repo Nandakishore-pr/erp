@@ -61,7 +61,8 @@ class Profile(models.Model):
 # Engineer Profile Model
 class EngineerProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='engineer_profile')
-    license_number = models.CharField(max_length=50, unique=True)
+    address = models.CharField(max_length=50, unique=True,default="Unknown Address")
+    about = models.CharField(max_length=50, unique=True,null=True)
     experience_years = models.IntegerField(default=0)
 
     def __str__(self):

@@ -14,24 +14,38 @@
                         </div>
                     </div>
                     <div class="col-md-8">
-                        <form method="POST">
+                        <form method="POST" action = '{% url "engineer_editprofile" %}'>
                             {% csrf_token %}
                             <div class="mb-3">
                                 <label for="name" class="form-label fw-semibold">Full Name</label>
-                                <input type="text" class="form-control shadow-sm" id="name" name="name" required>
+                                <textarea class="form-control shadow-sm" id="name" name="name" rows="1">{{ engineer_profile.user.username }}</textarea>
                             </div>
+                            
                             <div class="mb-3">
                                 <label for="email" class="form-label fw-semibold">Email Address</label>
-                                <input type="email" class="form-control shadow-sm" id="email" name="email" required>
+                                <textarea class="form-control shadow-sm" id="email" name="email" rows="1">{{ engineer_profile.user.email }}</textarea>
                             </div>
+                            
                             <div class="mb-3">
                                 <label for="phone" class="form-label fw-semibold">Phone Number</label>
-                                <input type="text" class="form-control shadow-sm" id="phone" name="phone" required>
+                                <textarea class="form-control shadow-sm" id="phone" name="phone" rows="1">{{ engineer_profile.user.phone_number }}</textarea>
                             </div>
+                            
                             <div class="mb-3">
                                 <label for="address" class="form-label fw-semibold">Address</label>
-                                <textarea class="form-control shadow-sm" id="address" name="address" rows="2"></textarea>
+                                <textarea class="form-control shadow-sm" id="address" name="address" rows="1">{{ engineer_profile.address }}</textarea>
                             </div>
+                            
+                            <div class="mb-3">
+                                <label for="about" class="form-label fw-semibold">About</label>
+                                <textarea class="form-control shadow-sm" id="about" name="about" rows="1">{{ engineer_profile.about }}</textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="years_of_experience" class="form-label fw-semibold">Years of Experience</label>
+                                <textarea class="form-control shadow-sm" id="experience_years" name="experience_years" rows="1">{{ engineer_profile.experience_years }}</textarea>
+                            </div>
+                            
                             <hr>
                             <h5 class="text-primary fw-bold">Change Password</h5>
                             <div class="mb-3">
@@ -57,7 +71,25 @@
     .content-wrapper {
         margin-top: 80px;
     }
-
+    
+    textarea {
+        height: 38px;
+        width: 100%; 
+        resize: none;
+        padding: 8px; 
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 16px; 
+        text-align: left;
+        vertical-align: middle; 
+        overflow: hidden; 
+        background-color: white;
+        line-height: 20px; 
+        white-space: nowrap;
+    }
+    
+    
+    
     .card {
         background: #fff;
         border-radius: 12px;

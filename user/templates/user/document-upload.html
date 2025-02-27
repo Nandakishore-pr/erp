@@ -1,0 +1,146 @@
+{% extends "user/base.html" %}
+{% load static %}
+{% block content %}
+
+<style>
+    .progress-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        margin: 20px auto;
+        width: 80%;
+    }
+    .progress-container::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 10%;
+        width: 80%;
+        height: 4px;
+        background: #ccc;
+        transform: translateY(-50%);
+    }
+    .step {
+        position: relative;
+        z-index: 2;
+        background: #ddd;
+        color: black;
+        padding: 10px 15px;
+        border-radius: 5px;
+        text-align: center;
+        font-size: 14px;
+    }
+    .step.active {
+        background: #28a745;
+        color: white;
+        font-weight: bold;
+    }
+    .step.completed {
+        background: #007bff;
+        color: white;
+    }
+
+    /* Ensure content doesn't overlap the footer */
+    .main-content {
+        min-height: 80vh;
+        padding-bottom: 50px; /* Space for footer */
+    }
+
+    .chat-box {
+        max-height: 300px;
+        overflow-y: auto;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background: #f8f9fa;
+    }
+    .message {
+        padding: 8px 12px;
+        border-radius: 10px;
+        margin: 5px 0;
+        max-width: 80%;
+    }
+    .user-message {
+        background: #007bff;
+        color: white;
+        align-self: flex-end;
+        text-align: right;
+    }
+    .engineer-message {
+        background: #28a745;
+        color: white;
+        align-self: flex-start;
+        text-align: left;
+    }
+</style>
+
+<div class="container mt-5 main-content">
+    <h2 class="text-center text-primary fw-bold">Document Workflow</h2>
+
+    <!-- Progress Steps -->
+    <div class="progress-container">
+        <div class="step {% if progress >= 1 %}completed{% endif %}">Engineer Approval</div>
+        <div class="step {% if progress >= 2 %}completed{% endif %}">Clerk Evaluation</div>
+        <div class="step {% if progress >= 3 %}completed{% endif %}">Clerk Approval</div>
+        <div class="step {% if progress >= 4 %}completed{% endif %}">Admin Approval</div>
+        <div class="step {% if progress >= 5 %}completed{% endif %}">Panchayat Officer</div>
+        <div class="step {% if progress >= 6 %}active{% endif %}">Document Delivered</div>
+    </div>
+
+    <!-- Document Submission -->
+    <div class="card mt-4 p-4 shadow-sm">
+        <h4>Send Document to Engineer</h4>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="document" class="form-label">Upload Document</label>
+                <input type="file" class="form-control" id="document" name="document" required>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="2" placeholder="Enter document details..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-success">Send to Engineer</button>
+        </form>
+    </div>
+
+    <!-- Chat Box -->
+    <div class="card mt-4 p-4 shadow-sm">
+        <h4>Chat with Engineer</h4>
+        <div class="chat-box" id="chat-box">
+            {% for message in messages %}
+                <div class="message {% if message.sender == user %}user-message{% else %}engineer-message{% endif %}">
+                    <strong>{{ message.sender.username }}:</strong> {{ message.text }}
+                </div>
+            {% endfor %}
+        </div>
+        <form id="chat-form" method="POST">
+            {% csrf_token %}
+            <div class="input-group mt-2">
+                <input type="text" id="chat-input" class="form-control" placeholder="Type your message..." required>
+                <button type="submit" class="btn btn-primary">Send</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById("chat-form").addEventListener("submit", function(event) {
+        event.preventDefault();
+        var messageInput = document.getElementById("chat-input");
+        var messageText = messageInput.value;
+
+        if (messageText.trim() !== "") {
+            var chatBox = document.getElementById("chat-box");
+            var newMessage = document.createElement("div");
+            newMessage.classList.add("message", "user-message");
+            newMessage.innerHTML = "<strong>You:</strong> " + messageText;
+            chatBox.appendChild(newMessage);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            messageInput.value = "";
+        }
+    });
+</script>
+
+{% endblock content %}

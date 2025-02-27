@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
+from common.models import EngineerProfile,Profile,CustomUser
 # from .models import CustomUser, Profile
 
 # def register(request):
@@ -67,7 +68,8 @@ def home(request):
 
 
 def user_engineer(request):
-    return render(request, 'user/engineer.html')  
+    engineers = EngineerProfile.objects.select_related('user').all()
+    return render(request, 'user/engineer.html',{'engineers':engineers })  
 
 
 def report(request):
@@ -79,3 +81,7 @@ def about(request):
 
 def employee(request):
     return render(request, 'user/employee.html') 
+
+
+def document_upload(request) :
+    return render(request, 'user/document-upload.html')

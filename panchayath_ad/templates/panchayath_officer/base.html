@@ -159,7 +159,7 @@
         <a href="{% url 'revenue' %}"><i class="fas fa-coins"></i> Revenue</a>
         <a href="{% url 'admin_task' %}"><i class="fas fa-tasks"></i> Tasks</a>
         <a href="{% url 'notice' %}"><i class="fas fa-bullhorn"></i> Notices</a>
-        <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <a href="{% url "logout" %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </div>
 
     <!-- Top Navbar -->
@@ -174,16 +174,6 @@
             <button><i class="fas fa-moon"></i></button>
             
             <!-- Profile Dropdown -->
-            <div class="dropdown">
-                <button class="btn btn-link dropdown-toggle text-white" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="https://via.placeholder.com/40" alt="Profile" class="profile-img">
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Settings</a></li>
-                    <li><a class="dropdown-item text-danger" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-                </ul>
-            </div>
         </div>
     </div>
 
