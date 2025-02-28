@@ -1,8 +1,12 @@
-
 {% extends "user/base.html" %}
 {% load static %}
 {% block content %}
-
+<div class="marquee-container">
+    <div class="notice-box">NOTICE</div>
+    <div class="marquee">
+        <span class="marquee-content">🚨 Panchayath Tax Payment Deadline: March 15th! ⚡ Apply for property approvals online now! 📢</span>
+    </div>
+</div>
 
 <!-- Section 1: Carousel -->
 <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
@@ -13,10 +17,10 @@
     </div>
     <div class="carousel-inner">
         <div class="carousel-item active">
-            <img src="{% static 'assets/slider05.jpg' %}" class="d-block w-100" alt="Slide 1">
+            <img src="{% static 'assets/income-tax-compressed.jpg' %}" class="d-block w-100" alt="Slide 1">
         </div>
         <div class="carousel-item">
-            <img src="{% static 'assets/inner-top-banner.jpg' %}" class="d-block w-100" alt="Slide 2">
+            <img src="{% static 'assets/one.jpg' %}" class="d-block w-100" alt="Slide 2">
         </div>
         <div class="carousel-item">
             <img src="{% static 'assets/one.jpg' %}" class="d-block w-100" alt="Slide 3">
@@ -30,32 +34,201 @@
     </button>
 </div>
 
-<!-- Section 2: Static Graphs -->
-<div class="container my-5">
-    <div class="row">
-        <!-- First Chart -->
-        <div class="col-md-6">
-            <h3 class="text-center">Graph 1</h3>
-            <canvas id="chart1"></canvas>
-        </div>
 
-        <!-- Second Chart -->
-        <div class="col-md-6">
-            <h3 class="text-center">Graph 2</h3>
-            <canvas id="chart2"></canvas>
+<!-- Inline CSS -->
+<style>
+.carousel-inner img {
+    width: 100%; /* Ensures images stretch to fit the width */
+    height: 500px; /* Set a fixed height */
+    object-fit: cover; /* Ensures images maintain aspect ratio and fill the container */
+}
+.carousel-item {
+    height: 500px;
+}
+.carousel-item img {
+    height: 100%;
+    object-fit: cover;
+}
+.marquee-container {
+    display: flex;
+    align-items: center;
+    background: #222;
+    color: white;
+    padding: 15px 0; /* Increased padding */
+    border-radius: 0;
+    overflow: hidden;
+    width: 100%;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    margin: 20px auto;
+    height: 60px; /* Increased height */
+    z-index: 1000;
+    position: relative; /* Keep it below navbar */
+    margin-top: 5px;
+}
+
+.notice-box {
+    background: Black;
+    color: white;
+    font-weight: bold;
+    padding: 18px 35px; /* Enlarged padding */
+    font-size: 1.6em; /* Larger font */
+    text-transform: uppercase;
+    border-radius: 8px 0 0 8px;
+    white-space: nowrap;
+}
+
+.marquee {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    white-space: nowrap;
+    
+    font-size: 1.3em; /* Slightly bigger text */
+}
+
+.marquee-content {
+    display: inline-block;
+    padding-left: 100%;
+    animation: scrollText 5s linear infinite;
+}
+
+@keyframes scrollText {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+</style>
+<div  style="background-color:rgb(30, 40, 44); color: White; padding: 10px; border-radius: 10px;">
+<!-- Section 2: Static Graphs -->
+<!-- Section: Stylish Graphs -->
+ 
+<div style="background-color:rgb(244, 239, 238); color: Black; padding: 20px; border-radius: 10px;">
+    <!-- Stylish Graphs Section -->
+    <div class="container my-5">
+        <div class="d-flex justify-content-between align-items-center graph-container">
+            <!-- First Chart (Left) -->
+            <div class="chart-box">
+                <h3 class="text-center">Graph 1</h3>
+                <canvas id="chart1"></canvas>
+            </div>
+
+            <!-- Second Chart (Right) -->
+            <div class="chart-box">
+                <h3 class="text-center">Graph 2</h3>
+                <canvas id="chart2"></canvas>
+            </div>
         </div>
     </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { labels: { color: 'black' } },
+        },
+        scales: {
+            x: { grid: { color: '#aaa' }, ticks: { color: 'black' } },
+            y: { grid: { color: '#aaa' }, ticks: { color: 'black' } }
+        }
+    };
+
+    const ctx1 = document.getElementById("chart1").getContext("2d");
+    new Chart(ctx1, {
+        type: "bar",
+        data: {
+            labels: ["Jan", "Feb", "Mar", "Apr"],
+            datasets: [{
+                label: "Revenue",
+                data: [10, 20, 30, 40],
+                backgroundColor: ["#FF5733", "#C70039", "#900C3F", "#581845"],
+                borderColor: "black",
+                borderWidth: 1
+            }]
+        },
+        options: options
+    });
+
+    const ctx2 = document.getElementById("chart2").getContext("2d");
+    new Chart(ctx2, {
+        type: "line",
+        data: {
+            labels: ["2019", "2020", "2021", "2022"],
+            datasets: [{
+                label: "Growth",
+                data: [5, 15, 25, 35],
+                backgroundColor: "black",
+                borderColor: "#FFC107",
+                borderWidth: 2,
+                fill: false
+            }]
+        },
+        options: options
+    });
+});
+</script>
+
+<!-- CSS Styling -->
+<style>
+    
+    .graph-container {
+        display: flex;
+        width: 100%;
+        gap: 0; /* Remove gaps */
+    }
+
+    .chart-box {
+        background-color:rgb(8, 7, 7);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: 48%; /* Ensures both take equal space */
+        height: 400px;
+    }
+
+    h3 {
+        color: black;
+        margin-bottom: 20px;
+    }
+
+    canvas {
+        width: 100%;
+        height: 100%;
+    }
+</style>
+
+
 </div>
 
 <!-- Section 3: Centered Text -->
-<div class="container my-5 d-flex justify-content-center align-items-center" style="height: 300px;">
-    <div class="text-center">
-        <h2>Lorem Ipsum</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum facilisis eros eu metus placerat, nec gravida nisi luctus.</p>
+<div>
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-8">
+                <h1 class="fw-bold" style="font-size: 2.8rem; color: #343a40;">Kumbalam Grama Panchayat</h1>
+                <p style="font-size: 1.2rem; line-height: 1.8; color: #555;">
+                    Kumbalam Grama Panchayath is a local self-government body in Ernakulam district, Kerala. Situated near the scenic backwaters, it plays a vital role in the governance and development of the region. The panchayath covers the Kumbalam area, which consists of a mix of urban and rural settlements, offering a peaceful environment while being well-connected to the city of Kochi.
+                    <br><br>
+                    The panchayath is responsible for essential public services such as sanitation, waste management, infrastructure development, and welfare programs. It also focuses on tax collection, revenue generation, and public utility projects. With a growing population, Kumbalam Grama Panchayath continuously strives to enhance local facilities, including roads, schools, and healthcare centers.
+                    <br><br>
+                    As part of Kerala’s decentralized governance system, the panchayath ensures citizen participation in decision-making and community development. Various initiatives are undertaken to support agriculture, fisheries, and small-scale industries, benefiting the local economy.
+                    <br><br>
+                    With a strong emphasis on sustainability and digital governance, Kumbalam Grama Panchayath is working towards modernizing public services while preserving its natural beauty and cultural heritage. It stands as a model for progressive and inclusive governance in Kerala.
+                </p>
+            </div>
+        </div>
     </div>
+    
+
 </div>
-
-
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -69,8 +242,8 @@
             datasets: [{
                 label: 'Monthly Sales',
                 data: [120, 190, 300, 250, 220, 310],
-                backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: 'rgba(228, 238, 244, 0.6))',
+                borderColor: 'rgb(243, 246, 248)',
                 borderWidth: 1
             }]
         },
@@ -109,6 +282,5 @@
         }
     });
 </script>
-
 
 {% endblock content %}

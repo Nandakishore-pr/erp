@@ -1,0 +1,152 @@
+{% extends "user/base.html" %}
+{% load static %}
+{% block content %}
+
+<!-- Custom Styling -->
+<style>
+    body {
+        background: url("{% static 'assets/elivation.jpg' %}") no-repeat center center fixed;
+        background-size: cover;
+        font-family: 'Poppins', sans-serif;
+    }
+    .profile-container {
+        display: grid;
+        grid-template-columns: 2fr 3fr;
+        gap: 30px;
+    }
+    .card-custom {
+        padding: 30px;
+        border-radius: 15px;
+        color: white;
+        backdrop-filter: blur(8px);
+        background: rgba(0, 0, 0, 0.7);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+    }
+    .bg-blue { background-color: rgb(21, 31, 34); width: 100%; } /* User Details */
+    .bg-red { background-color: rgba(7, 1, 2, 0.8); margin-bottom: 20px; } /* Tax Payment */
+    .bg-green { background-color: rgb(0, 6, 8); margin-bottom: 20px; } /* Documents */
+    .bg-yellow { background-color: rgb(21, 31, 34); } /* Video Call */
+    .btn-custom {
+        border-radius: 25px;
+        font-weight: bold;
+        padding: 12px 20px;
+        font-size: 18px;
+        transition: background 0.3s ease-in-out;
+    }
+    .btn-custom:hover {
+        background: rgba(255, 255, 255, 0.5);
+    }
+    h4 {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+    p, td, th {
+        font-size: 18px;
+    }
+</style>
+
+<div class="container my-5">
+    <h2 class="text-center mb-4 text-Black fw-bold"> User Profile</h2>
+
+    <div class="profile-container">
+        <!-- Left Panel -->
+        <div>
+            <div class="card-custom bg-blue">
+                <h4>User Details</h4>
+                <p><strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Phone:</strong> {{ user.profile.phone }}</p>
+                <p><strong>Address:</strong> {{ user.profile.address }}</p>
+                <p><strong>House Number:</strong> {{ user.profile.house_number }}</p>
+                <p><strong>Ward Number:</strong> {{ user.profile.ward_number }}</p>
+                <a href="#" class="btn btn-light btn-custom">✏️ Edit Profile</a>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div>
+            <div class="card-custom bg-red">
+                <h4>Tax Payment History</h4>
+                <table class="table text-white">
+                    <thead>
+                        <tr>
+                            <th>Year</th>
+                            <th>Amount Paid</th>
+                            <th>Payment Date</th>
+                            <th>Receipt</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tax in taxes %}
+                        <tr>
+                            <td>{{ tax.year }}</td>
+                            <td>₹{{ tax.amount }}</td>
+                            <td>{{ tax.payment_date }}</td>
+                            <td><a href="{{ tax.receipt.url }}" class="text-white" target="_blank">View Receipt</a></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center">No tax payments found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card-custom bg-green">
+                <h4>Documents Sent to Engineers</h4>
+                <table class="table text-white">
+                    <thead>
+                        <tr>
+                            <th>Document</th>
+                            <th>Submission Date</th>
+                            <th>Engineer</th>
+                            <th>Status</th>
+                            <th>Report</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for doc in documents %}
+                        <tr>
+                            <td><a href="{{ doc.file.url }}" class="text-white" target="_blank">{{ doc.name }}</a></td>
+                            <td>{{ doc.submission_date }}</td>
+                            <td>{{ doc.engineer }}</td>
+                            <td><span class="badge bg-info">{{ doc.status }}</span></td>
+                            <td>
+                                {% if doc.report %}
+                                <a href="{{ doc.report.url }}" class="badge bg-success" target="_blank">View Report</a>
+                                {% else %}
+                                <span class="badge bg-secondary">Pending</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center">No documents found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card-custom bg-yellow">
+                <h4>📹 Video Call for Verification</h4>
+                <p>Click below to start a video call with the clerk.</p>
+                <button id="startCall" class="btn btn-dark btn-custom">🎥 Start Video Call</button>
+                <div id="videoContainer" class="mt-3" style="display: none;">
+                    <iframe id="videoFrame" width="100%" height="400" src="https://meet.jit.si/{{ user.username }}" allow="camera; microphone; fullscreen" style="border: 0;"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+document.getElementById("startCall").addEventListener("click", function() {
+    document.getElementById("videoContainer").style.display = "block";
+});
+</script>
+
+{% endblock content %}
