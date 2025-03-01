@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
+from django.core.exceptions import ValidationError
 
 # Custom User Manager
 class CustomUserManager(BaseUserManager):
@@ -58,12 +59,32 @@ class Profile(models.Model):
     def __str__(self):
         return f"{self.user.username}'s Profile"
 
+
+def profile_image_upload_path(instance, filename):
+    return f'profile_images/{instance.user.username}/{filename}'
+
+
+def license_upload_path(instance, filename):
+    return f'licenses/{instance.user.username}/{filename}'
+
+
 # Engineer Profile Model
 class EngineerProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='engineer_profile')
-    address = models.CharField(max_length=50, unique=True,default="Unknown Address")
+    address = models.CharField(max_length=50, default='default address')
     about = models.CharField(max_length=50, unique=True,null=True)
     experience_years = models.IntegerField(default=0)
+    license_number = models.CharField(max_length=10, unique=True)
+    profile_image = models.ImageField(upload_to=profile_image_upload_path, null=True, blank=True)
+    license_document = models.FileField(upload_to=license_upload_path, null=True, blank=True)
+    is_approved = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        if self.pk:  # If object already exists
+            original = EngineerProfile.objects.get(pk=self.pk)
+            if self.license_number != original.license_number:
+                raise ValidationError("License number cannot be changed.")
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.user.username} - Engineer"

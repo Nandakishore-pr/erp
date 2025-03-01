@@ -3,14 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Engineer Registration</title>
+    <style>
+        /* Centering the form */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            width: 450px;
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        /* Style input fields */
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+            margin-right: 25px;
+            margin-left: 5px
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.5);
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        /* Hide password validation messages */
+        ul.errorlist {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-    <h2>engineer registration</h2>
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Register</button>
-    </form>
+
+
+    <div class="card">
+        <h2>Engineer Registration</h2>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% if field.errors %}
+                <div class="text-danger">
+                    {{ field.errors|striptags }}
+                </div>
+            {% endif %}
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <input type="text" name="username" placeholder="Enter your username" required>
+            </div>
+
+            <div class="form-group">
+                <input type="email" name="email" placeholder="Enter your email" required>
+            </div>
+
+            <div class="form-group">
+                <input type="text" name="phone_number" placeholder="Enter your phone number" required>
+            </div>
+            <div class="form-group">
+                <input type="text" name=" experience_years" placeholder=" your experience in years" required>
+            </div>
+
+
+            <div class="form-group">
+                <input type="text" name="license_number" placeholder="Enter your license number" required>
+            </div>
+
+            <div class="form-group">
+                <input type="file" name="license_document" required>
+            </div>
+
+            <div class="form-group">
+                <input type="password" name="password1" placeholder="Enter your password" required>
+            </div>
+
+            <div class="form-group">
+                <input type="password" name="password2" placeholder="Confirm your password" required>
+            </div>
+
+            <button type="submit">Register</button>
+        </form>
+    </div>
+
 </body>
 </html>

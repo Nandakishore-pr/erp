@@ -25,29 +25,57 @@
                 </tr>
             </thead>
             <tbody>
+                {% for clerk in clerks %} 
                 <tr>
-                    <td>1</td>
-                    <td>John Doe</td>
+                    <td><input type="checkbox" class="clerk-checkbox" value="{{ clerk.id }}"></td>
+                    <td>{{clerk.id}}</td>
+                    <td>{{clerk.username}}</td>
                     <td>40</td>
                     <td>90%</td>
                     <td>15</td>
                 </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Jane Smith</td>
-                    <td>38</td>
-                    <td>85%</td>
-                    <td>12</td>
-                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
     
     <!-- Clerk Actions -->
     <div class="btn-container mb-3">
-        <button class="btn btn-success" onclick="addRow()">Add Clerk</button>
-        <button class="btn btn-danger" onclick="deleteRow()">Delete Selected</button>
+        <button class="btn btn-success" onclick="openAddClerkModal()">Add Clerk</button>
+        <button class="btn btn-danger" onclick="deleteSelectedClerks()">Delete Selected</button>
     </div>
+
+    <div class="modal fade" id="addClerkModal" tabindex="-1" aria-labelledby="addClerkModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addClerkModalLabel">Add Clerk</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="clerkForm">
+                        <div class="mb-3">
+                            <label for="clerkName" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="clerkName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="clerkEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="clerkEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="clerkPhone" class="form-label">Phone Number</label>
+                            <input type="text" class="form-control" id="clerkPhone" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="submitClerkForm()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     
     <!-- Chat Feature -->
     <div class="card p-3 mb-3">
@@ -83,66 +111,91 @@
     </div>
 </div>
 
+
 <script>
-    function sortTable(n) {
-        var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-        table = document.getElementById("clerkTable");
-        switching = true;
-        dir = "asc";
-        while (switching) {
-            switching = false;
-            rows = table.rows;
-            for (i = 1; i < (rows.length - 1); i++) {
-                shouldSwitch = false;
-                x = rows[i].getElementsByTagName("TD")[n];
-                y = rows[i + 1].getElementsByTagName("TD")[n];
-                if (dir == "asc" && x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-                    shouldSwitch = true;
-                    break;
-                } else if (dir == "desc" && x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-                    shouldSwitch = true;
-                    break;
-                }
+    function getCSRFToken() {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+        if (!csrfToken) {
+            console.error("⚠️ CSRF token not found!");
+        }
+        return csrfToken;
+    }
+
+    
+    function openAddClerkModal() {
+        var modal = new bootstrap.Modal(document.getElementById('addClerkModal'));
+        modal.show();
+    }
+
+    function submitClerkForm() {
+        const name = document.getElementById("clerkName").value;
+        const email = document.getElementById("clerkEmail").value;
+        const phone = document.getElementById("clerkPhone").value;
+    
+        if (!name || !email || !phone) {
+            alert("Please fill in all fields!");
+            return;
+        }
+    
+        fetch("/ad/add-clerk/", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": getCSRFToken(),  // Ensure CSRF token is included
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ name, email, phone })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Clerk added successfully!");
+                document.getElementById("clerkForm").reset(); // ✅ Reset form fields
+                const modal = bootstrap.Modal.getInstance(document.getElementById("addClerkModal"));
+                modal.hide(); 
+            }else {
+                alert("Error: " + data.error);
             }
-            if (shouldSwitch) {
-                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-                switching = true;
-                switchcount++;
+        })
+        .catch(error => console.error("⚠️ Error:", error));
+    }
+
+    function deleteSelectedClerks() {
+        const selectedClerks = Array.from(document.querySelectorAll('.clerk-checkbox:checked'))
+            .map(checkbox => checkbox.value);
+    
+        if (selectedClerks.length === 0) {
+            alert("Please select at least one clerk to delete.");
+            return;
+        }
+    
+        if (!confirm("Are you sure you want to delete the selected clerks?")) {
+            return;
+        }
+    
+        fetch("/ad/delete-clerks/", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": getCSRFToken(),
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ clerk_ids: selectedClerks })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Selected clerks deleted successfully!");
+                
+                // Remove deleted rows from the table
+                selectedClerks.forEach(clerkId => {
+                    document.querySelector(`input[value="${clerkId}"]`).closest("tr").remove();
+                });
             } else {
-                if (switchcount === 0 && dir === "asc") {
-                    dir = "desc";
-                    switching = true;
-                }
+                alert("Error: " + data.error);
             }
-        }
+        })
+        .catch(error => console.error("⚠️ Error:", error));
     }
-
-    function addRow() {
-        const table = document.getElementById("clerkTable").getElementsByTagName('tbody')[0];
-        const newRow = table.insertRow();
-        newRow.innerHTML = `<td>New</td>
-                            <td>New Clerk</td>
-                            <td>0</td>
-                            <td>0%</td>
-                            <td>0</td>`;
-        const email = prompt("Enter email for new clerk:");
-        if (email) {
-            sendEmail("New Clerk", email);
-        }
-    }
-
-    function deleteRow() {
-        const table = document.getElementById("clerkTable").getElementsByTagName('tbody')[0];
-        const rows = table.getElementsByTagName('tr');
-        for (let i = rows.length - 1; i >= 0; i--) {
-            table.deleteRow(i);
-        }
-    }
-
-    function sendEmail(name, email) {
-        console.log(`Sending email to ${email} with login details.`);
-        alert(`Login details sent to ${email}`);
-    }
+    
 </script>
 
 {% endblock %}

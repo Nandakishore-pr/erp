@@ -20,65 +20,115 @@
                 </tr>
             </thead>
             <tbody>
+                
+                {% for engineer in engineers %}
+                {% if  engineer.engineer_profile.is_approved %}
                 <tr>
-                    <td>1</td>
-                    <td>Arun Kumar</td>
-                    <td>LIC12345</td>
-                    <td>5 Years</td>
+                    <td>{{engineer.id}}</td>
+                    <td>{{engineer.username}}</td>
+                    <td>{{engineer.engineer_profile.license_number}}</td>
+                    <td>{{engineer.engineer_profile.experience_years}}</td>
                     <td><button class="btn btn-danger btn-sm" onclick="deleteEngineer(1)">Delete</button></td>
                 </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Neha Sharma</td>
-                    <td>LIC67890</td>
-                    <td>3 Years</td>
-                    <td><button class="btn btn-danger btn-sm" onclick="deleteEngineer(2)">Delete</button></td>
-                </tr>
+                {% endif %}
+                {% endfor %}
             </tbody>
         </table>
     </div>
     
     <!-- Engineer Requests for Approval -->
     <div class="card p-3 mb-3">
+        <input type="hidden" id="csrf_token" value="{% csrf_token %}">
+
         <h5>Engineer Requests</h5>
         <table class="table table-striped" id="requestTable">
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>License</th>
-                    <th>Experience</th>
-                    <th>About</th>
+                    <th>License Number</th>
+                    <th>license Document</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>Rahul Menon</td>
-                    <td>LIC45678</td>
-                    <td>4 Years</td>
-                    <td>Specialized in urban planning</td>
-                    <td>
-                        <button class="btn btn-success btn-sm" onclick="approveEngineer('Rahul Menon')">Approve</button>
-                        <button class="btn btn-danger btn-sm" onclick="rejectEngineer('Rahul Menon')">Reject</button>
-                    </td>
-                </tr>
+                {% for engineer in engineers %}
+                    <tr>
+                        <td>{{engineer.username}}</td>
+                        <td>{{engineer.engineer_profile.license_number}}</td>
+                        <td>{{engineer.engineer_profile.license_document}}</td>
+                        <td>
+                            {% if not engineer.engineer_profile.is_approved %}
+                                <button class="btn btn-success btn-sm" onclick="approveEngineer({{ engineer.engineer_profile.id }})">Approve</button>
+                                <button class="btn btn-danger btn-sm" onclick="rejectEngineer({{ engineer.engineer_profile.id }})">Reject</button>
+                                {% else %}
+                                <span class="badge bg-success">Approved</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
 
 <script>
-    function deleteEngineer(id) {
-        alert(`Engineer with ID ${id} deleted.`);
+    function getCSRFToken() {
+        return document.querySelector('[name=csrfmiddlewaretoken]').value;
     }
     
-    function approveEngineer(name) {
-        alert(`${name} has been approved.`);
+    function approveEngineer(engineerId) {
+        fetch(`/ad/approve_engineer/${engineerId}/`, {  
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCSRFToken(),  
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({})
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("✅ Engineer Approved:", data);
+    
+            // Update UI dynamically without reloading
+            const row = document.querySelector(`button[onclick="approveEngineer(${engineerId})"]`).closest('tr');
+            row.querySelector('td:last-child').innerHTML = '<span class="badge bg-success">Approved</span>';
+        })
+        .catch(error => console.error("❌ Error:", error));
     }
     
-    function rejectEngineer(name) {
-        alert(`${name} has been rejected.`);
+
+    function rejectEngineer(engineerId) {
+        if (!engineerId) {
+            console.error("❌ Invalid engineer ID:", engineerId);
+            return;
+        }
+    
+        fetch(`/ad/reject_engineer/${engineerId}/`, {  
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCSRFToken(),  
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({})
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => { throw new Error(text); });
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("❌ Engineer Rejected:", data);
+    
+            // ✅ Refresh the page after successful rejection
+            setTimeout(() => {
+                location.reload();
+            }, 500); // Slight delay for a better user experience
+        })
+        .catch(error => console.error("⚠️ Error:", error));
     }
+    
 </script>
+
 
 {% endblock %}

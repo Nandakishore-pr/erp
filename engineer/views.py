@@ -64,5 +64,3 @@ def engineer_editprofile(request):
     }
     return render(request, 'engineer/editprofile.html', context)
 
-def engineer_register(request):
-    return render(request, 'engineer/regist.html')
