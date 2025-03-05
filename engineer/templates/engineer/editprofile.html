@@ -1,17 +1,41 @@
 {% extends "engineer/base.html" %}
+{% load static %}
 {% block content %}
 <div class="container content-wrapper">
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="card shadow-lg border-0 rounded-4 p-4">
                 <h2 class="text-center mb-4 fw-bold text-primary">Edit Profile</h2>
+                {% if messages %}
+                <div class="container mt-3">
+                    {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
                 <div class="row">
                     <div class="col-md-4 text-center">
-                        <div class="profile-pic-container">
-                            <img src="https://via.placeholder.com/150" class="rounded-circle img-thumbnail shadow" id="profileImage" alt="Profile Picture">
-                            <label for="profilePicUpload" class="upload-btn btn btn-outline-primary btn-sm mt-2">Change Photo</label>
-                            <input type="file" class="form-control d-none" id="profilePicUpload">
+                        <div class="profile-pic-container text-center">
+                            {% if engineer_profile.profile_image %}
+                                <img src="{{ engineer_profile.profile_image.url }}" class="rounded-circle img-thumbnail shadow" id="profileImage" alt="Profile Picture">
+                            {% else %}
+                                <img src="{% static 'assets/profileicon.png' %}" class="rounded-circle img-thumbnail shadow" id="profileImage" alt="Default Profile Picture">
+                            {% endif %}                            
+                            <!-- Hidden File Input Form -->
+                            <form id="profilePicForm" method="POST" action="{% url 'upload_profile_image' %}" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="file" class="form-control d-none" id="profilePicUpload" name="profile_image" accept="image/*" onchange="uploadProfileImage()">
+                            </form>
+                        
+                            <a href="#" class="upload-btn btn btn-outline-primary btn-sm mt-2" onclick="document.getElementById('profilePicUpload').click();">Change Photo</a>
                         </div>
+                        
+
+                        
                     </div>
                     <div class="col-md-8">
                         <form method="POST" action = '{% url "engineer_editprofile" %}'>
@@ -19,11 +43,6 @@
                             <div class="mb-3">
                                 <label for="name" class="form-label fw-semibold">Full Name</label>
                                 <textarea class="form-control shadow-sm" id="name" name="name" rows="1">{{ engineer_profile.user.username }}</textarea>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="email" class="form-label fw-semibold">Email Address</label>
-                                <textarea class="form-control shadow-sm" id="email" name="email" rows="1">{{ engineer_profile.user.email }}</textarea>
                             </div>
                             
                             <div class="mb-3">
@@ -43,23 +62,46 @@
                             
                             <div class="mb-3">
                                 <label for="years_of_experience" class="form-label fw-semibold">Years of Experience</label>
-                                <textarea class="form-control shadow-sm" id="experience_years" name="experience_years" rows="1">{{ engineer_profile.experience_years }}</textarea>
-                            </div>
-                            
-                            <hr>
-                            <h5 class="text-primary fw-bold">Change Password</h5>
-                            <div class="mb-3">
-                                <label for="password" class="form-label fw-semibold">New Password</label>
-                                <input type="password" class="form-control shadow-sm" id="password" name="password">
-                            </div>
-                            <div class="mb-3">
-                                <label for="confirmPassword" class="form-label fw-semibold">Confirm Password</label>
-                                <input type="password" class="form-control shadow-sm" id="confirmPassword" name="confirmPassword">
+                                <textarea class="form-control shadow-sm" id="years_of_experience" name="years_of_experience" rows="1">{{ engineer_profile.experience_years }}</textarea>
                             </div>
                             <div class="text-center">
                                 <button type="submit" class="btn btn-primary w-50 shadow">Save Changes</button>
                             </div>
-                        </form>
+                            </form>
+                            <hr>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#changePasswordModal">Change Password</a>
+
+                            <!-- Change Password Modal -->
+                            <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title text-primary fw-bold" id="changePasswordModalLabel">Change Password</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form method="POST" action="{% url 'change_password' %}">
+                                                {% csrf_token %}
+                                                <div class="mb-3">
+                                                    <label for="currentPassword" class="form-label fw-semibold">Current Password</label>
+                                                    <input type="password" class="form-control shadow-sm" id="currentPassword" name="currentPassword" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="password" class="form-label fw-semibold">New Password</label>
+                                                    <input type="password" class="form-control shadow-sm" id="password" name="password" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="confirmPassword" class="form-label fw-semibold">Confirm Password</label>
+                                                    <input type="password" class="form-control shadow-sm" id="confirmPassword" name="confirmPassword" required>
+                                                </div>
+                                                <div class="text-center">
+                                                    <button type="submit" class="btn btn-primary w-50 shadow">change password</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                     </div>
                 </div>
             </div>
@@ -104,4 +146,10 @@
         cursor: pointer;
     }
 </style>
+
+<script>
+    function uploadProfileImage() {
+        document.getElementById('profilePicForm').submit(); // Auto-submit the form when a file is selected
+    }
+    </script>
 {% endblock content %}

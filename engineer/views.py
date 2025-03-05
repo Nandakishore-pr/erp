@@ -3,6 +3,7 @@ from common.models import EngineerProfile
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.contrib.auth import update_session_auth_hash
 
 # Create your views here.
 
@@ -37,7 +38,6 @@ def engineer_editprofile(request):
     if request.method == 'POST':
         # Get data from the form
         name = request.POST.get('name')
-        email = request.POST.get('email')
         phone = request.POST.get('phone')
         address = request.POST.get('address')
         about = request.POST.get('about')
@@ -45,7 +45,6 @@ def engineer_editprofile(request):
 
         # Update User model fields
         user.username = name
-        user.email = email
         user.phone_number = phone  # If phone_number exists in User model
         user.save()
 
@@ -64,3 +63,50 @@ def engineer_editprofile(request):
     }
     return render(request, 'engineer/editprofile.html', context)
 
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        current_password = request.POST.get('currentPassword')
+        new_password = request.POST.get('password')
+        confirm_password = request.POST.get('confirmPassword')
+
+        user = request.user  # Get the logged-in user
+
+        # Check if the current password is correct
+        if not user.check_password(current_password):
+            messages.error(request, "Current password is incorrect.")
+            return redirect('engineer_editprofile')  # Redirect back to profile page
+
+        # Validate new password and confirmation
+        if new_password != confirm_password:
+            messages.error(request, "New passwords do not match.")
+            return redirect('engineer_editprofile')
+
+        if current_password == new_password:
+            messages.error(request, "New password cannot be the same as the current password.")
+            return redirect('engineer_editprofile')
+
+        # Update the password
+        user.set_password(new_password)
+        user.save()
+
+        # Keep the user logged in after password change
+        update_session_auth_hash(request, user)
+
+        messages.success(request, "Password changed successfully.")
+        return redirect('engineer_editprofile')  # Redirect to profile or any desired page
+
+    return redirect('engineer_editprofile')
+
+
+@login_required
+def upload_profile_image(request):
+    if request.method == 'POST' and request.FILES.get('profile_image'):
+        profile = EngineerProfile.objects.get(user=request.user)
+        profile.profile_image = request.FILES['profile_image']
+        profile.save()
+        messages.success(request, "Profile image updated successfully.")
+    else:
+        messages.error(request, "Please select a valid image file.")
+
+    return redirect('engineer_editprofile')

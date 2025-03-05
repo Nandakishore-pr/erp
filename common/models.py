@@ -89,10 +89,19 @@ class EngineerProfile(models.Model):
     def __str__(self):
         return f"{self.user.username} - Engineer"
 
+
+def clerk_profile_image_upload_path(instance, filename):
+    return f'profile_images/clerk/{instance.user.username}/{filename}'
+
+
 # Clerk Profile Model
 class ClerkProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='clerk_profile')
     department = models.CharField(max_length=100)
+    about = models.CharField(max_length=50, unique=True,null=True)
+    position = models.CharField(max_length=50, unique=True,null=True)
+    profile_image = models.ImageField(upload_to=clerk_profile_image_upload_path, null=True, blank=True)
+
 
     def __str__(self):
         return f"{self.user.username} - Clerk"

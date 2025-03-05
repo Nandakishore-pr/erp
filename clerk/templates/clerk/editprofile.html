@@ -1,100 +1,158 @@
-{% extends "clerk/base.html" %}
+{% extends "engineer/base.html" %}
 {% load static %}
-
 {% block content %}
-<div class="container mt-5 pt-4 d-flex justify-content-center">
-    <div class="card shadow-lg p-4 rounded-4" style="max-width: 999px; width: 300%; background: #ffffff;">
-        <h2 class="text-center text-primary mb-4 fw-bold">Edit Profile</h2>
+<div class="container content-wrapper">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0 rounded-4 p-4">
+                <h2 class="text-center mb-4 fw-bold text-primary">Edit Profile</h2>
+                {% if messages %}
+                <div class="container mt-3">
+                    {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
 
-        <div class="text-center">
-            <!-- Profile Picture Preview -->
-            {% if user.profile_photo %}
-                <img src="{{ user.profile_photo.url }}" alt="Profile Photo" class="profile-img">
-            {% else %}
-                <img src="{% static 'assets/default-profile.png' %}" alt="Default Profile" class="profile-img">
-            {% endif %}
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        <div class="profile-pic-container text-center">
+                            {% if clerk_profile.profile_image %}
+                                <img src="{{ clerk_profile.profile_image.url }}" class="rounded-circle img-thumbnail shadow" id="profileImage" alt="Profile Picture">
+                            {% else %}
+                                <img src="{% static 'assets/profileicon.png' %}" class="rounded-circle img-thumbnail shadow" id="profileImage" alt="Default Profile Picture">
+                            {% endif %}                            
+                            <!-- Hidden File Input Form -->
+                            <form id="profilePicForm" method="POST" action="{% url 'upload_clerk_profile_image' %}" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="file" class="form-control d-none" id="profilePicUpload" name="profile_image" accept="image/*" onchange="uploadProfileImage()">
+                            </form>
+                        
+                            <a href="#" class="upload-btn btn btn-outline-primary btn-sm mt-2" onclick="document.getElementById('profilePicUpload').click();">Change Photo</a>
+                        </div>
+                        
+
+                        
+                    </div>
+                    <div class="col-md-8">
+                        <form method="POST" action="{% url "clerk_editprofile" %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="name" class="form-label fw-semibold">Full Name</label>
+                                <textarea class="form-control shadow-sm" id="name" name="name" rows="1">{{ user.username }}</textarea>
+                            </div>
+                        
+                            <div class="mb-3">
+                                <label for="phone" class="form-label fw-semibold">Phone Number</label>
+                                <textarea class="form-control shadow-sm" id="phone" name="phone" rows="1">{{ user.phone_number }}</textarea>
+                            </div>
+                        
+                        
+                            <div class="mb-3">
+                                <label for="about" class="form-label fw-semibold">About</label>
+                                <textarea class="form-control shadow-sm" id="about" name="about" rows="1">{{ clerk_profile.about }}</textarea>
+                            </div>
+                        
+                            <div class="mb-3">
+                                <label for="position" class="form-label fw-semibold">Position</label>
+                                <textarea class="form-control shadow-sm" id="position" name="position" rows="1">{{ clerk_profile.position }}</textarea>
+                            </div>
+                        
+                            <div class="mb-3">
+                                <label for="department" class="form-label fw-semibold">Department</label>
+                                <textarea class="form-control shadow-sm" id="deparment" name="deparment" rows="1">{{ clerk_profile.department }}</textarea>
+                            </div>
+                        
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary w-50 shadow">Save Changes</button>
+                            </div>
+                        </form>
+                        
+                            <hr>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#changePasswordModal">Change Password</a>
+
+                            <!-- Change Password Modal -->
+                            <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title text-primary fw-bold" id="changePasswordModalLabel">Change Password</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form method="POST" action="{% url 'clerk_change_password' %}">
+                                                {% csrf_token %}
+                                                <div class="mb-3">
+                                                    <label for="currentPassword" class="form-label fw-semibold">Current Password</label>
+                                                    <input type="password" class="form-control shadow-sm" id="currentPassword" name="currentPassword" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="password" class="form-label fw-semibold">New Password</label>
+                                                    <input type="password" class="form-control shadow-sm" id="password" name="password" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="confirmPassword" class="form-label fw-semibold">Confirm Password</label>
+                                                    <input type="password" class="form-control shadow-sm" id="confirmPassword" name="confirmPassword" required>
+                                                </div>
+                                                <div class="text-center">
+                                                    <button type="submit" class="btn btn-primary w-50 shadow">change password</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <form method="POST" enctype="multipart/form-data" class="mt-3">
-            {% csrf_token %}
-
-            <!-- Profile Photo Upload -->
-            <div class="mb-3">
-                <label class="form-label fw-bold">Upload New Profile Photo</label>
-                <input type="file" name="profile_photo" class="form-control">
-            </div>
-            <div class="mb-3">
-                <label class="form-label fw-bold">Position</label>
-                <textarea name="about" class="form-control" rows="3" placeholder="Write a short bio...">{{ user.about }}</textarea>
-            </div>
-
-            <!-- Additional Details -->
-            <div class="mb-3">
-                <label class="form-label fw-bold">Details</label>
-                <textarea name="details" class="form-control" rows="3" placeholder="Add additional information (address, designation, etc.)">{{ user.details }}</textarea>
-            </div>
-            <!-- Phone Number -->
-            <div class="mb-3">
-                <label class="form-label fw-bold">Phone Number</label>
-                <input type="text" name="phone" class="form-control" value="{{ user.phone }}" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label fw-bold">About</label>
-                <textarea name="about" class="form-control" rows="3" placeholder="Write a short bio...">{{ user.about }}</textarea>
-            </div>
-
-            <!-- Additional Details -->
-            <div class="mb-3">
-                <label class="form-label fw-bold">Details</label>
-                <textarea name="details" class="form-control" rows="3" placeholder="Add additional information (address, designation, etc.)">{{ user.details }}</textarea>
-            </div>
-
-
-
-            <!-- Change Password -->
-            <div class="mb-3">
-                <label class="form-label fw-bold">New Password</label>
-                <input type="password" name="new_password" class="form-control">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label fw-bold">Confirm New Password</label>
-                <input type="password" name="confirm_password" class="form-control">
-            </div>
-
-            <button type="submit" class="btn btn-primary w-100 shadow-sm fw-bold">Update Profile</button>
-        </form>
     </div>
 </div>
 
-<!-- Custom Styling -->
 <style>
-    body {
-        background:rgb(229, 232, 235);
+    .content-wrapper {
+        margin-top: 80px;
     }
+    
+    textarea {
+        height: 38px;
+        width: 100%; 
+        resize: none;
+        padding: 8px; 
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 16px; 
+        text-align: left;
+        vertical-align: middle; 
+        overflow: hidden; 
+        background-color: white;
+        line-height: 20px; 
+        white-space: nowrap;
+    }
+    
+    
+    
     .card {
-        border-radius: 15px;
+        background: #fff;
+        border-radius: 12px;
     }
-    .profile-img {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 3px solid #007bff;
-        transition: transform 0.3s ease;
+
+    .profile-pic-container {
+        position: relative;
     }
-    .profile-img:hover {
-        transform: scale(1.05);
-    }
-    .form-control {
-        border-radius: 10px;
-        padding: 10px;
-        font-size: 16px;
-    }
-    .btn {
-        border-radius: 10px;
-        padding: 10px;
-        font-size: 18px;
+
+    .upload-btn {
+        display: block;
+        cursor: pointer;
     }
 </style>
-{% endblock %}
+
+<script>
+    function uploadProfileImage() {
+        document.getElementById('profilePicForm').submit(); // Auto-submit the form when a file is selected
+    }
+    </script>
+{% endblock content %}
