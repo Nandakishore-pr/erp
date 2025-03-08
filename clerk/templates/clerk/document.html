@@ -42,9 +42,9 @@
         </div>
     </div>
 
-    <!-- Live Chat for Public Verification -->
+    <!-- Live Chat and Video Call for Public Verification -->
     <div class="card shadow mb-4 border-0 rounded">
-        <div class="card-header bg-success text-white fw-bold">Live Chat for Document Validation</div>
+        <div class="card-header bg-success text-white fw-bold">Live Chat & Video Call for Document Validation</div>
         <div class="card-body">
             <div class="chat-container border rounded p-3 bg-light" style="height: 300px; overflow-y: auto;">
                 <div class="chat-message bg-white p-2 rounded shadow-sm mb-2">
@@ -57,6 +57,13 @@
             <div class="mt-3">
                 <textarea class="form-control" rows="2" placeholder="Type a message..."></textarea>
                 <button class="btn btn-primary mt-2">Send</button>
+            </div>
+            <div class="mt-3 text-center">
+                <button class="btn btn-success" id="startCall">Start Video Call</button>
+            </div>
+            <div class="video-call-container mt-3 text-center" style="display: none;">
+                <video id="localVideo" autoplay playsinline class="border rounded shadow" width="300" height="200"></video>
+                <video id="remoteVideo" autoplay playsinline class="border rounded shadow" width="300" height="200"></video>
             </div>
         </div>
     </div>
@@ -83,33 +90,21 @@
     </div>
 </div>
 
-<style>
-    .container {
-        max-width: 1000px;
+<script>
+    let localStream;
+    document.getElementById("startCall").addEventListener("click", async function() {
+        document.querySelector(".video-call-container").style.display = "block";
+        await startVideoCall();
+    });
+
+    async function startVideoCall() {
+        try {
+            localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            document.getElementById("localVideo").srcObject = localStream;
+        } catch (error) {
+            console.error("Error accessing media devices.", error);
+        }
     }
-    .card {
-        border-radius: 10px;
-    }
-    .btn {
-        border-radius: 20px;
-    }
-    .chat-container {
-        height: 300px;
-        overflow-y: auto;
-        background: #f8f9fa;
-        padding: 10px;
-        border-radius: 10px;
-    }
-    .chat-message {
-        max-width: 80%;
-        padding: 8px;
-        border-radius: 10px;
-    }
-    .chat-message.text-end {
-        background-color: #007bff;
-        color: white;
-        align-self: flex-end;
-    }
-</style>
+</script>
 
 {% endblock content %}
