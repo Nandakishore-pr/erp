@@ -99,7 +99,7 @@ class ClerkProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='clerk_profile')
     department = models.CharField(max_length=100)
     about = models.CharField(max_length=50, unique=True,null=True)
-    position = models.CharField(max_length=50, unique=True,null=True)
+    position = models.CharField(max_length=50,null=True)
     profile_image = models.ImageField(upload_to=clerk_profile_image_upload_path, null=True, blank=True)
 
 
