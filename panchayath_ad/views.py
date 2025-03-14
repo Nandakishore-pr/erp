@@ -225,9 +225,8 @@ def reject_leave(request, leave_id):
             leave.save()
             return JsonResponse({"status": "success"})
        
-<<<<<<< Updated upstream
+
     return JsonResponse({"status": "error", "message": "Invalid request method"})
->>>>>>> Stashed changes
-=======
-    return JsonResponse({"status": "error", "message": "Invalid request method"})
->>>>>>> Stashed changes
+
+    
+
