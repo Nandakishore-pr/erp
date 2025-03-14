@@ -7,21 +7,14 @@ from django.http import JsonResponse, HttpResponseNotFound
 import random
 import string
 import json
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 from clerk.models import ClerkDocument
 from engineer.models import EngineerDocument
-
-=======
 from clerk.models import Attendance
 from clerk.models import LeaveRequest  # Import LeaveRequest from the Clerk app
 from django.contrib import messages
->>>>>>> Stashed changes
-=======
 from clerk.models import Attendance
 from clerk.models import LeaveRequest  # Import LeaveRequest from the Clerk app
 from django.contrib import messages
->>>>>>> Stashed changes
 # Create your views here.
 def home(request):
     return render(request,'panchayath_officer/home.html')
