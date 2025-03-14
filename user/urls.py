@@ -10,8 +10,10 @@ urlpatterns = [
     path('report/', views.report, name='report'),
     path('about/', views.about, name='about'),
     path('employee/', views.employee, name='employee'),
-    path('document_upload/', views.document_upload, name='document_upload'),
+    path('document_upload/<int:engineer_id>/', views.document_upload, name='document_upload'),
     path('paytax/',views.paytax, name='paytax'),
-    path('profiledetails',views.profiledetails ,name='profiledetails'),
+    path('profiledetails', views.profiledetails, name='profiledetails'),
+    path("edit-profile/", views.edit_profile, name="edit_profile"),
+    path("upload/", views.upload_document, name="upload_document"),
     path("chatbot/", chatbot_response, name="chatbot_response"),  # Chatbot API
 ]

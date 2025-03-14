@@ -14,26 +14,17 @@
                         <th>Document ID</th>
                         <th>Title</th>
                         <th>Submitted By</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                        <th>Suggestion </th>
+                        
                     </tr>
                 </thead>
                 <tbody>
+                    {% for document in documents %}
                     <tr>
-                        <td>DOC-001</td>
-                        <td>Project Blueprint</td>
-                        <td>John Doe</td>
-                        <td><span class="badge bg-warning text-dark">Pending</span></td>
-                        <td><button class="btn btn-info btn-sm">Review</button></td>
+                        <td>DOC-{{ document.id }}</td>
+                        <td>{{ document.description }}</td>
+                        <td>{{ document.user.username }}</td>
                     </tr>
-                    <tr>
-                        <td>DOC-002</td>
-                        <td>Safety Guidelines</td>
-                        <td>Jane Smith</td>
-                        <td><span class="badge bg-success">Approved</span></td>
-                        <td><button class="btn btn-secondary btn-sm" disabled>Reviewed</button></td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
@@ -43,46 +34,58 @@
     <div class="card shadow mb-4 border-0 rounded">
         <div class="card-header bg-success text-white fw-bold">Assign Employees for Review</div>
         <div class="card-body">
-            <form>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{% if message.tags == 'success' %}success{% else %}danger{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <!-- Select Document -->
                 <div class="mb-3">
                     <label for="documentSelect" class="form-label fw-bold">Select Document</label>
-                    <select class="form-select" id="documentSelect">
-                        <option value="1">Project Blueprint</option>
-                        <option value="2">Safety Guidelines</option>
+                    <select class="form-select" id="documentSelect" name="document_id" required>
+                        <option value="" disabled selected>Select a document</option>
+                        {% for document in documents %}
+                            <option value="{{ document.id }}">{{ document.description }}</option>
+                        {% endfor %}
                     </select>
                 </div>
+            
+                <!-- Select Clerk -->
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Select Employees</label>
+                    <label class="form-label fw-bold">Select Clerk</label>
                     <div class="row">
+                        {% for clerk in clerks %}
                         <div class="col-md-4">
-                            <input class="form-check-input" type="checkbox" id="employee1">
-                            <label class="form-check-label" for="employee1">John Doe</label>
+                            <input class="form-check-input" type="radio" id="clerk{{ clerk.id }}" name="clerk_id" value="{{ clerk.id }}" required>
+                            <label class="form-check-label" for="clerk{{ clerk.id }}">{{ clerk.username }}</label>
                         </div>
-                        <div class="col-md-4">
-                            <input class="form-check-input" type="checkbox" id="employee2">
-                            <label class="form-check-label" for="employee2">Jane Smith</label>
-                        </div>
-                        <div class="col-md-4">
-                            <input class="form-check-input" type="checkbox" id="employee3">
-                            <label class="form-check-label" for="employee3">Michael Brown</label>
-                        </div>
+                        {% endfor %}
                     </div>
                 </div>
-                <div class="card-body">
-                    <form>
-                        <div class="mb-3">
-                            <label for="docTitle" class="form-label fw-bold">Document Title</label>
-                            <input type="text" class="form-control" id="docTitle" placeholder="Enter document title">
-                        </div>
-                        <div class="mb-3">
-                            <label for="suggestionText" class="form-label fw-bold">Your Suggestions</label>
-                            <textarea class="form-control" id="suggestionText" rows="4" placeholder="Provide your feedback here..."></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-warning text-dark">Submit Suggestion</button>
-                    </form>
+            
+                <!-- Upload Additional Document -->
+                <div class="mb-3">
+                    <label for="document" class="form-label">Upload Document</label>
+                    <input type="file" class="form-control" id="document" name="additional_document" required>
                 </div>
+            
+                <!-- Document Description -->
+                <div class="mb-3">
+                    <label for="description" class="form-label fw-bold">Document Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter a description"></textarea>
+                </div>
+            
+                <!-- Submit Button -->
                 <button type="submit" class="btn btn-primary">Assign</button>
             </form>
+            
         </div>
     </div>
 

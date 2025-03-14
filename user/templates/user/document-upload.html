@@ -91,8 +91,17 @@
     <!-- Document Submission -->
     <div class="card mt-4 p-4 shadow-sm">
         <h4>Send Document to Engineer</h4>
-        <form method="POST" enctype="multipart/form-data">
+        {% if messages %}
+            <div class="alert alert-info">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        <form method="POST" enctype="multipart/form-data" action="{% url 'upload_document' %}">
             {% csrf_token %}
+            <input type="hidden" name="engineer_id" value="{{ engineer_id }}">
+        
             <div class="mb-3">
                 <label for="document" class="form-label">Upload Document</label>
                 <input type="file" class="form-control" id="document" name="document" required>
@@ -103,6 +112,7 @@
             </div>
             <button type="submit" class="btn btn-success">Send to Engineer</button>
         </form>
+        
     </div>
 
     <!-- Chat Box -->

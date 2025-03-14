@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'clerk',
     'panchayath_ad',
     'common',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [

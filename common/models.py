@@ -53,6 +53,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 # Profile Model
 class Profile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile')
+    address = models.CharField(max_length=50,blank=True,null=True)
     house_number = models.CharField(max_length=50, blank=True, null=True)
     ward_number = models.CharField(max_length=50, blank=True, null=True)
 

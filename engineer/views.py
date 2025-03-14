@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from common.models import EngineerProfile
+from common.models import EngineerProfile,CustomUser
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth import update_session_auth_hash
-
+from user.models import UserDocument
+from django.http import JsonResponse
+from .models import EngineerDocument
 # Create your views here.
 
 def engineer_dashboard(request):
@@ -14,13 +16,66 @@ def editprofile(request):
     return render(request, 'engineer/editprofile.html')
 
 def employees(request):
-    return render(request, 'engineer/employees.html')
+    clerks = CustomUser.objects.filter(role='clerk')
+    return render(request, 'engineer/employees.html',{"clerks":clerks})
+from django.contrib import messages
 
+@login_required
 def doc_wrk(request):
-    return render(request,'engineer/doc_wrk.html')
+    engineer_id = request.user.id
 
+    # Fetch documents assigned to the engineer by the user
+    documents = UserDocument.objects.filter(engineer_id=engineer_id, status=True).select_related("user")
+    clerks = CustomUser.objects.filter(role='clerk')
+
+    if request.method == "POST":
+        document_id = request.POST.get("document_id")
+        clerk_id = request.POST.get("clerk_id")
+        additional_document = request.FILES.get("additional_document")
+        description = request.POST.get("description")
+
+        if document_id and clerk_id and additional_document:
+            user_document = UserDocument.objects.get(id=document_id)
+            clerk = CustomUser.objects.get(id=clerk_id)
+
+            # Save to EngineerDocument model
+            EngineerDocument.objects.create(
+                engineer=request.user,
+                user_document=user_document,
+                clerk=clerk,
+                additional_document=additional_document,
+                description=description
+            )
+
+            messages.success(request, "Document successfully assigned to the clerk.")
+            return redirect("doc_wrk")
+
+        messages.error(request, "Please fill in all required fields.")
+
+    return render(request, 'engineer/doc_wrk.html', {"documents": documents, "clerks": clerks})
+
+@login_required
 def document_verification(request):
-    return render(request,'engineer/document_verification.html')
+    engineer_id = request.user.id  # Assuming the logged-in engineer is a CustomUser instance
+    documents = UserDocument.objects.filter(engineer_id=engineer_id).select_related("user")
+    return render(request,'engineer/document_verification.html',{"documents": documents})
+
+
+@login_required
+def update_document_status(request, document_id, status):
+    document = get_object_or_404(UserDocument, id=document_id, engineer=request.user)
+
+    if status == "approve":
+        document.status = True
+        document.save()
+        return JsonResponse({"success": True, "status": True})
+    
+    elif status == "reject":
+        document.delete()
+        return JsonResponse({"success": True, "status": False})
+
+    return JsonResponse({"success": False})
+
 
 @login_required
 def engineer_editprofile(request):

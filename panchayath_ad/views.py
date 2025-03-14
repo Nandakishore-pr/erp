@@ -7,6 +7,8 @@ from django.http import JsonResponse, HttpResponseNotFound
 import random
 import string
 import json
+from clerk.models import ClerkDocument
+from engineer.models import EngineerDocument
 
 # Create your views here.
 def home(request):
@@ -131,3 +133,47 @@ def delete_clerks(request):
         except Exception as e:
             return JsonResponse({"success": False, "error": str(e)})
     return JsonResponse({"success": False, "error": "Invalid request method."})
+
+def document_approval(request):
+    clerk_documents = ClerkDocument.objects.select_related('engineer_document__user_document').all()
+
+    context = {
+        'clerk_documents': clerk_documents
+    }
+    return render(request,'panchayath_officer/document_approval.html',context)
+
+
+@csrf_exempt
+def approve_clerk_document(request, doc_id):
+    """Approve document: Change status & save to EngineerDocument"""
+    if request.method == "POST":
+        try:
+            clerk_doc = ClerkDocument.objects.get(id=doc_id)
+            # Save to EngineerDocument
+            EngineerDocument.objects.create(
+                engineer=clerk_doc.engineer_document.engineer,
+                user_document=clerk_doc.engineer_document.user_document,
+                clerk=clerk_doc.clerk,
+                description=clerk_doc.description,
+                additional_document=clerk_doc.additional_document,
+                status=True  # Mark as verified
+            )
+            # Update status in ClerkDocument
+            clerk_doc.status = True
+            clerk_doc.save()
+            return JsonResponse({"success": True})
+        except ClerkDocument.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Document not found."})
+    return JsonResponse({"success": False, "error": "Invalid request."})
+
+@csrf_exempt
+def reject_clerk_document(request, doc_id):
+    """Reject document: Delete from ClerkDocument"""
+    if request.method == "POST":
+        try:
+            document = ClerkDocument.objects.get(id=doc_id)
+            document.delete()
+            return JsonResponse({"success": True})
+        except ClerkDocument.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Document not found."})
+    return JsonResponse({"success": False, "error": "Invalid request."})

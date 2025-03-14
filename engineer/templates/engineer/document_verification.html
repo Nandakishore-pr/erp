@@ -7,7 +7,7 @@
     <!-- Uploaded Documents List -->
     <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
         <div class="card-header bg-gradient text-white fw-bold text-center" style="background: linear-gradient(45deg, #007bff, #6610f2);">
-            <h5 class="mb-0">📄 Uploaded Documents</h5>
+            <h5 class="mb-0" style="color:black">📄 Uploaded Documents</h5>
         </div>
         <div class="card-body p-4">
             <table class="table table-hover table-bordered text-center align-middle shadow-sm">
@@ -16,37 +16,41 @@
                         <th>📑 Document ID</th>
                         <th>📌 Title</th>
                         <th>👤 Uploaded By</th>
-                        <th>📊 Status</th>
+                        <th>📄 Document</th>
                         <th>⚡ Action</th>
+                        <th>📊 Status</th>
                         <th>💬 Chat</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {% for document in documents %}
                     <tr>
-                        <td>DOC-101</td>
-                        <td>Building Plan</td>
-                        <td>Alice Johnson</td>
-                        <td><span class="badge bg-warning text-dark">⏳ Pending</span></td>
+                        <td>DOC-{{ document.id }}</td>
+                        <td>{{ document.description }}</td>
+                        <td>{{ document.user.username }}</td>
                         <td>
-                            <button class="btn btn-success btn-sm px-3 rounded-pill">✔ Approve</button>
-                            <button class="btn btn-danger btn-sm px-3 rounded-pill">✖ Reject</button>
+                            <a href="{{ document.document.url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                📂 View Document
+                            </a>
+                        </td>
+                        {% comment %} {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-muted">No documents uploaded yet.</td>
+                        </tr> {% endcomment %}
+                        <td>
+                            <button class="btn btn-success btn-sm px-3 rounded-pill" onclick="updateStatus({{ document.id }}, 'approve')">✔ Approve</button>
+                            <button class="btn btn-danger btn-sm px-3 rounded-pill" onclick="updateStatus({{ document.id }}, 'reject')">✖ Reject</button>
+                        </td>
+                        <td>
+                            <span id="status-{{ document.id }}" class="badge {% if document.status %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                                {% if document.status %} ✅ Approved {% else %} ⏳ Pending {% endif %}
+                            </span>
                         </td>
                         <td>
                             <button class="btn btn-info btn-sm px-3 rounded-pill" onclick="openChat('Building Plan')">💬 Chat</button>
                         </td>
                     </tr>
-                    <tr>
-                        <td>DOC-102</td>
-                        <td>Environmental Report</td>
-                        <td>Bob Smith</td>
-                        <td><span class="badge bg-success">✅ Approved</span></td>
-                        <td>
-                            <button class="btn btn-secondary btn-sm px-3 rounded-pill" disabled>✔ Reviewed</button>
-                        </td>
-                        <td>
-                            <button class="btn btn-info btn-sm px-3 rounded-pill" onclick="openChat('Environmental Report')">💬 Chat</button>
-                        </td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
@@ -82,6 +86,40 @@
     .btn:hover { opacity: 0.8; }
     .table-hover tbody tr:hover { background: #f8f9fa; }
 </style>
+
+
+<script>
+    function updateStatus(documentId, action) {
+        fetch(`/engineer/update-document-status/${documentId}/${action}/`, {
+            method: "GET",
+            headers: { "X-Requested-With": "XMLHttpRequest" }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (data.status) {
+                    // Approved: Update status badge
+                    const statusElement = document.getElementById(`status-${documentId}`);
+                    if (statusElement) {
+                        statusElement.innerHTML = "✅ Approved";
+                        statusElement.classList.remove("bg-warning", "text-dark");
+                        statusElement.classList.add("bg-success", "text-white");
+                    }
+                } else {
+                    // Rejected: Remove the row immediately
+                    const rowElement = document.getElementById(`row-${documentId}`);
+                    if (rowElement) {
+                        rowElement.remove();
+                    }
+                }
+            }
+        })
+        .catch(error => console.error("Error:", error));
+    }
+</script>
+
+
+
 
 <script>
     function openChat(docTitle) {

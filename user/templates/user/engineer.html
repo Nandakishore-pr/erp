@@ -33,7 +33,9 @@
                     <li class="list-group-item"><b>Experience:</b> {{ engineer.experience_years }} years</li>
                 </ul>
                 <div class="card-body text-center">
-                    <a href="{% url "document_upload" %}" class="btn btn-success w-100 fw-bold">Go Through With Documentation</a>
+                    <a href="{% url 'document_upload' engineer.user.id %}" class="btn btn-success w-100 fw-bold">
+                        Go Through With Documentation
+                    </a>
                     <a href="#" class="btn btn-outline-primary w-100 mt-2 fw-bold">Chat</a>
                 </div>
             </div>

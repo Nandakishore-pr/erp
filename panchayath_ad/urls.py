@@ -14,5 +14,8 @@ urlpatterns = [
     path('reject_engineer/<int:engineer_id>/', views.reject_engineer, name='reject_engineer'),
     path("add-clerk/", views.add_clerk, name="add_clerk"),
     path("delete-clerks/", views.delete_clerks, name="delete_clerks"),
+    path('document_approval/',views.document_approval,name = 'document_approval'),
+    path('approve-document/<int:doc_id>/', views.approve_clerk_document, name='approve_clerk_document'),
+    path('reject-document/<int:doc_id>/', views.reject_clerk_document, name='reject_clerk_document'),
 ]
 

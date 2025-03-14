@@ -6,6 +6,8 @@ import random
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+from django.contrib.auth.decorators import login_required
+from .models import UserDocument
 
 
 def home(request):
@@ -25,17 +27,55 @@ def about(request):
     return render(request, 'user/about.html') 
 
 def employee(request):
+
     return render(request, 'user/employee.html') 
 
-
-def document_upload(request) :
-    return render(request, 'user/document-upload.html')
+@login_required
+def document_upload(request,engineer_id):
+    return render(request, 'user/document-upload.html', {"engineer_id": engineer_id})
 
 def paytax(request):
     return render(request, 'user/paytax.html')
 
 def profiledetails(request):
     return render(request,'user/profiledetails.html')
+
+@login_required
+def upload_document(request):
+    if request.method == "POST":
+        document = request.FILES.get("document")
+        description = request.POST.get("description")
+        engineer_id = request.POST.get("engineer_id")  # Get engineer ID from form
+
+        if document and engineer_id:
+            engineer = CustomUser.objects.get(id=engineer_id)  # Fetch engineer
+            UserDocument.objects.create(user=request.user, engineer=engineer, document=document, description=description)
+            messages.success(request, "Document uploaded successfully! Wait for engineer's approval.")
+            return redirect("document_upload", engineer_id=engineer.id)
+
+        messages.error(request, "Failed to upload document. Please try again.")
+
+    return redirect("document_upload")
+
+@login_required
+def edit_profile(request):
+    if request.method == "POST":
+        user = request.user
+        user.username = request.POST.get("username")
+        user.email = request.POST.get("email")
+        user.phone_number = request.POST.get("phone_number")
+
+        profile, created = Profile.objects.get_or_create(user=user)
+        profile.address = request.POST.get("address")
+        profile.house_number = request.POST.get("house_number")
+        profile.ward_number = request.POST.get("ward_number")
+        user.save()
+        profile.save()
+
+        messages.success(request, "Profile updated successfully!")
+        return redirect("profiledetails")  # Change 'profile' to your profile view name
+
+    return redirect("profiledetails")  # Redirect if not POST
     
 responses = {
     "hello": ["Hi there!", "Hello!", "Hey!"],

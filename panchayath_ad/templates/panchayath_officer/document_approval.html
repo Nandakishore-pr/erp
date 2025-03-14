@@ -1,0 +1,111 @@
+{% extends 'panchayath_officer/base.html' %}
+
+{% block title %}Document Approval{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <h2 class="text-center mb-4">Document Approval</h2>
+    
+    <!-- Pending Tasks -->
+    <div class="card p-3">
+        
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Documnet ID</th>
+                    <th>Document from User</th>
+                    <th>Document from Engineer</th>
+                    <th>Document from Clerk</th>
+                    <th>clerk</th>
+                    <th>status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for doc in clerk_documents %}
+                <tr>
+                    <td>doc {{ doc.id }}</td>
+                    <td>
+                        <a href="{{ doc.engineer_document.user_document.document.url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                            📂 View User Document
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{{ doc.engineer_document.additional_document.url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                            📂 View Engineer Document
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{{ doc.additional_document.url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                            📂 View Clerk Document
+                        </a>
+                    </td>
+                    <td>{{ doc.clerk.username }}</td>
+                    <td>
+                        {% if doc.status %}
+                            <span class="badge bg-success">Verified</span>
+                        {% else %}
+                            <span class="badge bg-warning">Pending</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if not doc.status %}
+                            <button class="btn btn-success btn-sm" onclick="approveDocument({{ doc.id }})">Approve</button>
+                            <button class="btn btn-danger btn-sm" onclick="rejectDocument({{ doc.id }})">Reject</button>
+                        {% else %}
+                            <span class="text-muted">Approved</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">No documents available.</td>
+                </tr>
+                {% endfor %}
+        
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function deleteTask(taskId) {
+        alert(`Task #${taskId} deleted.`);
+    }
+</script>
+<script>
+function approveDocument(docId) {
+    if (confirm("Are you sure you want to approve this document?")) {
+        fetch(`/ad/approve-document/${docId}/`, {
+            method: "POST",
+            headers: { "X-CSRFToken": "{{ csrf_token }}" }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert("Failed to approve document.");
+            }
+        });
+    }
+}
+
+function rejectDocument(docId) {
+    if (confirm("Are you sure you want to reject this document?")) {
+        fetch(`/ad/reject-document/${docId}/`, {
+            method: "POST",
+            headers: { "X-CSRFToken": "{{ csrf_token }}" }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert("Failed to reject document.");
+            }
+        });
+    }
+}
+</script>
+{% endblock %}
