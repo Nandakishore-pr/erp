@@ -14,5 +14,9 @@ urlpatterns = [
     path('reject_engineer/<int:engineer_id>/', views.reject_engineer, name='reject_engineer'),
     path("add-clerk/", views.add_clerk, name="add_clerk"),
     path("delete-clerks/", views.delete_clerks, name="delete_clerks"),
+    # path("leave-requests/", views.admin_leave_requests, name="admin_leave_requests"),
+    path("approve-leave/<int:leave_id>/", views.approve_leave, name="approve_leave"),
+    path("reject-leave/<int:leave_id>/", views.reject_leave, name="reject_leave"),
+    
 ]
 

@@ -13,5 +13,6 @@ urlpatterns = [
     path('task/', views.task, name='task'),
     path('clerk-change-password/', views.clerk_change_password, name='clerk_change_password'),
     path('upload-profile-image/', views.upload_clerk_profile_image, name='upload_clerk_profile_image'),
+    path("request-leave/", views.request_leave, name="request_leave"),  # Add this line
 
     ]

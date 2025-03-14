@@ -14,6 +14,8 @@ import numpy as np
 from datetime import datetime
 from django.http import HttpResponse
 import os
+from .models import LeaveRequest
+from django.utils.dateparse import parse_date
 
 # Create your views here.
 
@@ -237,3 +239,46 @@ def mark_attendance(request):
         return redirect("attendance")  # Redirect back to attendance page
 
     return render(request, "clerk/attendance.html")
+
+def attendance(request):
+    clerk_profile = ClerkProfile.objects.get(user=request.user)
+    today = timezone.now().date()
+
+    # Fetch morning and afternoon attendance records
+    morning_attendance = Attendance.objects.filter(clerk=clerk_profile, date=today, session="Morning").first()
+    afternoon_attendance = Attendance.objects.filter(clerk=clerk_profile, date=today, session="Afternoon").first()
+
+    context = {
+        "morning_attendance": morning_attendance.status if morning_attendance else None,
+        "morning_time": morning_attendance.time.strftime("%I:%M %p") if morning_attendance else None,
+        "afternoon_attendance": afternoon_attendance.status if afternoon_attendance else None,
+        "afternoon_time": afternoon_attendance.time.strftime("%I:%M %p") if afternoon_attendance else None,
+    }
+    
+    return render(request, "clerk/attendance.html", context)
+
+def request_leave(request):
+    if request.method == "POST":
+        leave_date = request.POST.get("leave_date")
+        reason = request.POST.get("reason")
+
+        if leave_date and reason:
+            try:
+                # Get the ClerkProfile associated with the logged-in user
+                clerk_profile = ClerkProfile.objects.get(user=request.user)
+
+                LeaveRequest.objects.create(
+                    clerk=clerk_profile,  # Assign ClerkProfile instance
+                    date=parse_date(leave_date),
+                    reason=reason,
+                    status="Pending"
+                )
+                messages.success(request, "Your leave request has been submitted successfully.")
+            except ClerkProfile.DoesNotExist:
+                messages.error(request, "Clerk profile not found. Please contact the admin.")
+        else:
+            messages.error(request, "Please fill out all fields.")
+
+        return redirect("attendance")  # Redirect back to attendance page
+
+    return render(request, "attendance.html")

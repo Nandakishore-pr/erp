@@ -15,4 +15,12 @@ class Attendance(models.Model):
     def __str__(self):
         return f"{self.employee_name} - {self.date} - {self.session}"
 
-    
+
+class LeaveRequest(models.Model):
+    clerk = models.ForeignKey(ClerkProfile, on_delete=models.CASCADE)  # Assuming user model
+    date = models.DateField()
+    reason = models.TextField()
+    status = models.CharField(max_length=20, choices=[("Pending", "Pending"), ("Approved", "Approved"), ("Rejected", "Rejected")], default="Pending")
+
+    def __str__(self):
+        return f"{self.clerk.username} - {self.date} - {self.status}"
