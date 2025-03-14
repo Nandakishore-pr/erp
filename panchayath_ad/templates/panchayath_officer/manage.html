@@ -1,4 +1,5 @@
 {% extends 'panchayath_officer/base.html' %}
+{% comment %} {% load custom_filters %} {% endcomment %}
 
 {% block title %}Clerk Management{% endblock %}
 
@@ -11,33 +12,59 @@
     </nav>
     
     <h2 class="text-center mb-4">Clerk Management</h2>
-    
+        <input type="date" id="dateFilter" class="form-control w-auto" value="{{ today_date|date:'Y-m-d' }}">
+
     <!-- Clerk Table with Sorting -->
     <div class="table-responsive">
         <table class="table table-striped" id="clerkTable">
             <thead>
                 <tr>
-                    <th onclick="sortTable(0)">ID</th>
-                    <th onclick="sortTable(1)">Name</th>
-                    <th onclick="sortTable(2)">Working Hours</th>
-                    <th onclick="sortTable(3)">Attendance (%)</th>
-                    <th onclick="sortTable(4)">Reports Completed</th>
+                    <th>Select</th>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>Morning Time</th>
+                    <th>Evening Time</th>
+                    <th>Reports Completed</th>
                 </tr>
             </thead>
-            <tbody>
+             <tbody>
                 {% for clerk in clerks %} 
                 <tr>
-                    <td><input type="checkbox" class="clerk-checkbox" value="{{ clerk.id }}"></td>
-                    <td>{{clerk.id}}</td>
-                    <td>{{clerk.username}}</td>
-                    <td>40</td>
-                    <td>90%</td>
+                    <td><input type="checkbox" class="clerk-checkbox" value="{{ clerk.user.id }}"></td>
+
+                    <td>{{ clerk.user.id }}</td>
+                    <td>{{ clerk.user.username }}</td>
+                    <td>
+                        {% for record in clerk.attendances.all %}
+                            {{ record.date }}<br>
+                        {% endfor %}
+                    </td>
+                
+                    <td>
+                        {% for record in clerk.attendances.all %}
+                            {% if record.session == "Morning" %}
+                                {{ record.time }}<br>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                
+                    <td>
+                        {% for record in clerk.attendances.all %}
+                            {% if record.session == "Afternoon" %}
+                                {{ record.time }}<br>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                
                     <td>15</td>
                 </tr>
                 {% endfor %}
-            </tbody>
+            </tbody> 
+                        </tbody>
         </table>
     </div>
+    
     
     <!-- Clerk Actions -->
     <div class="btn-container mb-3">
@@ -89,17 +116,55 @@
     </div>
     
     <!-- Leave Approvals -->
-    <div class="card p-3 mb-3">
-        <h5>Leave Approvals</h5>
-        <ul class="list-group">
-            <li class="list-group-item d-flex justify-content-between">
-                John Doe - 2 Days <button class="btn btn-success btn-sm">Approve</button> <button class="btn btn-danger btn-sm">Reject</button>
-            </li>
-            <li class="list-group-item d-flex justify-content-between">
-                Jane Smith - 1 Day <button class="btn btn-success btn-sm">Approve</button> <button class="btn btn-danger btn-sm">Reject</button>
-            </li>
-        </ul>
+    
+    {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="container">
+    <h2 class="mb-4">Pending Leave Requests</h2>
+
+    <div class="container">
+        <h2 class="mb-4">Pending Leave Requests</h2>
+    
+        {% if leave_requests %}
+            <ul class="list-group" id="leave-list">
+                {% for leave in leave_requests %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center" id="leave-{{ leave.id }}">
+                        <div>
+                            <strong>{{ leave.clerk.user.username }}</strong>  
+                            <span class="text-muted"> - {{ leave.date }}</span>  
+                            <br>
+                            <small class="text-info">{{ leave.reason }}</small>
+                        </div>
+                        <div>
+                            <button class="btn btn-success btn-sm approve-btn" data-id="{{ leave.id }}">
+                                ✅ Approve
+                            </button>
+                            <button class="btn btn-danger btn-sm reject-btn" data-id="{{ leave.id }}">
+                                ❌ Reject
+                            </button>  
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="alert alert-info text-center">
+                No pending leave requests.
+            </div>
+        {% endif %}
     </div>
+    
+    
+    
+            
     
     <!-- Performance Badges and Rewards -->
     <div class="card p-3">
@@ -113,6 +178,22 @@
 
 
 <script>
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const dateFilter = document.getElementById("dateFilter");
+        const tableRows = document.querySelectorAll("#attendanceTable tr");
+    
+        function filterTable() {
+            const selectedDate = dateFilter.value;
+            tableRows.forEach(row => {
+                row.style.display = row.getAttribute("data-date") === selectedDate ? "" : "none";
+            });
+        }
+    
+        dateFilter.addEventListener("change", filterTable);
+        filterTable(); // Run on page load
+    });
+    
     function getCSRFToken() {
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
         if (!csrfToken) {
@@ -196,6 +277,50 @@
         .catch(error => console.error("⚠️ Error:", error));
     }
     
+</script>
+<script>
+    function getCSRFToken() {
+        return document.querySelector('[name=csrfmiddlewaretoken]')?.value || "";
+    }
+</script>    
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        function handleLeaveAction(button, action) {
+            let leaveId = button.getAttribute("data-id");
+            let url = action === "approve" ? `/approve_leave/${leaveId}/` : `/reject_leave/${leaveId}/`;
+
+            fetch(url, {
+                method: "POST",
+                <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+                headers: {
+                    "X-CSRFToken":   getCSRFToken(),
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Content-Type": "application/json",
+
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status) {
+                    document.getElementById(`leave-${leaveId}`).remove();
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+        document.querySelectorAll(".approve-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                handleLeaveAction(this, "approve");
+            });
+        });
+
+        document.querySelectorAll(".reject-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                handleLeaveAction(this, "reject");
+            });
+        });
+    });
 </script>
 
 {% endblock %}

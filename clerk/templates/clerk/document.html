@@ -1,27 +1,19 @@
 {% extends "clerk/base.html" %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="mb-4 text-primary fw-bold">Clerk Document Workflow</h2>
 
-    <!-- Pending Documents from Engineers -->
-    <div class="card shadow mb-4 border-0 rounded">
+<div class="container mt-5">
+    <h2 class="mb-4 text-primary fw-bold text-center">Clerk Document Workflow</h2>
+
+    <!-- Pending Documents Section -->
+    <div class="card shadow-sm mb-4 border-0 rounded">
         <div class="card-header bg-primary text-white fw-bold">Pending Verification</div>
         <div class="card-body">
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{% if message.tags == 'success' %}success{% else %}danger{% endif %} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
             <table class="table table-hover text-center align-middle">
                 <thead class="table-dark">
                     <tr>
                         <th>Document ID</th>
-                        <th>Document from User</th>
-                        <th>Document from engineer</th>
+                        <th>Title</th>
                         <th>Submitted By (Engineer)</th>
                         <th>Status</th>
                         <th>Action</th>
@@ -84,11 +76,33 @@
         </div>
     </div>
 
-    <!-- Live Chat and Video Call for Public Verification -->
-    <div class="card shadow mb-4 border-0 rounded">
-        <div class="card-header bg-success text-white fw-bold">Live Chat & Video Call for Document Validation</div>
-        <div class="card-body">
-            <div class="chat-container border rounded p-3 bg-light" style="height: 300px; overflow-y: auto;">
+    <div class="card shadow-sm mb-4 border-0 rounded">
+        <div class="card-header bg-danger text-white fw-bold">Submit to Admin</div>
+        <div class="card-body p-4">
+            <form>
+                <div class="mb-3">
+                    <label for="documentSelect" class="form-label fw-bold">Select Document</label>
+                    <select class="form-select" id="documentSelect">
+                        <option value="1">Construction Plan</option>
+                        <option value="2">Structural Report</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="finalRemarks" class="form-label fw-bold">Final Remarks</label>
+                    <textarea class="form-control" id="finalRemarks" rows="3" placeholder="Enter review comments..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-danger">Submit to Admin</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Live Chat & Video Call Section -->
+    <div class="card shadow-sm mb-4 border-0 rounded">
+        <div class="card-header bg-success text-white fw-bold">Live Chat & Video Call</div>
+        <div class="card-body p-4">
+            <div class="chat-container border rounded p-3 bg-light">
                 <div class="chat-message bg-white p-2 rounded shadow-sm mb-2">
                     <strong>John Doe (Public):</strong> Can you confirm the approval process for this document?
                 </div>
@@ -101,12 +115,9 @@
                 <button class="btn btn-primary mt-2">Send</button>
             </div>
             <div class="mt-3 text-center">
-                <button class="btn btn-success" id="startCall">Start Video Call</button>
+                <button class="btn btn-success" onclick="startJitsiCall()">Start Video Call</button>
             </div>
-            <div class="video-call-container mt-3 text-center" style="display: none;">
-                <video id="localVideo" autoplay playsinline class="border rounded shadow" width="300" height="200"></video>
-                <video id="remoteVideo" autoplay playsinline class="border rounded shadow" width="300" height="200"></video>
-            </div>
+            <div id="meet" class="mt-3"></div>
         </div>
     </div>
 
@@ -114,51 +125,20 @@
     <div class="card shadow mb-4 border-0 rounded">
         <div class="card-header bg-danger text-white fw-bold">Submit to Admin for Final Approval</div>
         <div class="card-body">
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{% if message.tags == 'success' %}success{% else %}danger{% endif %} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-            <form method="POST" enctype="multipart/form-data" action = '{% url "submit_clerk_document" %}'>
-                {% csrf_token %}
-                
+            <form>
                 <div class="mb-3">
                     <label for="documentSelect" class="form-label fw-bold">Select Document</label>
-                    <select class="form-select" id="documentSelect" name="documentSelect" onchange="updateUserDocumentTitle()">
-                        <option selected disabled>Select Document</option>
-                        {% for document in documents %}
-                            <option value="{{ document.id }}" data-user-title="{{ document.user_document.description }}">
-                                {{ document.description }}
-                            </option>
-                        {% empty %}
-                            <option disabled>No documents available</option>
-                        {% endfor %}
+                    <select class="form-select" id="documentSelect">
+                        <option value="1">Construction Plan</option>
+                        <option value="2">Structural Report</option>
                     </select>
                 </div>
-            
-                <div class="mb-3">
-                    <label for="userDocumentTitle" class="form-label fw-bold">User Document Title</label>
-                    <input type="text" class="form-control" id="userDocumentTitle" readonly>
-                </div>
-            
-                <div class="mb-3">
-                    <label for="document" class="form-label">Upload Document</label>
-                    <input type="file" class="form-control" id="document" name="additional_document" required>
-                </div>
-            
                 <div class="mb-3">
                     <label for="finalRemarks" class="form-label fw-bold">Final Remarks</label>
-                    <textarea class="form-control" id="finalRemarks" name="finalRemarks" rows="3" placeholder="Enter final review comments..."></textarea>
+                    <textarea class="form-control" id="finalRemarks" rows="3" placeholder="Enter final review comments..."></textarea>
                 </div>
-            
                 <button type="submit" class="btn btn-danger">Submit to Admin</button>
             </form>
-            
-           
-            
         </div>
     </div>
 </div>
@@ -176,57 +156,6 @@
             document.getElementById("localVideo").srcObject = localStream;
         } catch (error) {
             console.error("Error accessing media devices.", error);
-        }
-    }
-</script>
-
-<script>
-    function updateUserDocumentTitle() {
-        var selectElement = document.getElementById("documentSelect");
-        var selectedOption = selectElement.options[selectElement.selectedIndex];
-        var userTitle = selectedOption.getAttribute("data-user-title");
-
-        document.getElementById("userDocumentTitle").value = userTitle || "";
-    }
-</script>
-
-<script>
-    function verifyDocument(documentId) {
-        fetch(`/clerk/verify-document/${documentId}/`, {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}",
-                "Content-Type": "application/json"
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                document.getElementById(`status-${documentId}`).innerHTML = '<span class="badge bg-success">Verified</span>';
-                document.getElementById(`document-row-${documentId}`).querySelector("td:last-child").innerHTML = '<span class="text-muted">Verified</span>';
-            } else {
-                alert("Error verifying document.");
-            }
-        });
-    }
-
-    function rejectDocument(documentId) {
-        if (confirm("Are you sure you want to reject this document?")) {
-            fetch(`/clerk/reject-document/${documentId}/`, {
-                method: "DELETE",
-                headers: {
-                    "X-CSRFToken": "{{ csrf_token }}",
-                    "Content-Type": "application/json"
-                },
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    document.getElementById(`document-row-${documentId}`).remove();
-                } else {
-                    alert("Error rejecting document.");
-                }
-            });
         }
     }
 </script>

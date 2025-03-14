@@ -1,5 +1,5 @@
-from django.shortcuts import render
-from common.models import CustomUser, EngineerProfile
+from django.shortcuts import render, get_object_or_404, redirect
+from common.models import CustomUser, EngineerProfile, ClerkProfile
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
@@ -7,17 +7,39 @@ from django.http import JsonResponse, HttpResponseNotFound
 import random
 import string
 import json
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 from clerk.models import ClerkDocument
 from engineer.models import EngineerDocument
 
+=======
+from clerk.models import Attendance
+from clerk.models import LeaveRequest  # Import LeaveRequest from the Clerk app
+from django.contrib import messages
+>>>>>>> Stashed changes
+=======
+from clerk.models import Attendance
+from clerk.models import LeaveRequest  # Import LeaveRequest from the Clerk app
+from django.contrib import messages
+>>>>>>> Stashed changes
 # Create your views here.
 def home(request):
     return render(request,'panchayath_officer/home.html')
 
 def manage(request):
-    clerks = CustomUser.objects.filter(role='clerk')
-    return render(request,'panchayath_officer/manage.html',{'clerks':clerks})
-
+    clerks = ClerkProfile.objects.select_related("user").prefetch_related("attendances").all()
+    leave_requests = LeaveRequest.objects.select_related("clerk").all()
+    # attendance_records = {
+    #     clerk.user.id: list(clerk.attendances.all()) for clerk in clerks
+    # }
+    
+    # for clerk in clerks:
+    #      attendance_records[clerk.user.id] = list(Attendance.objects.filter(clerk=clerk))
+    return render(request, 'panchayath_officer/manage.html', {
+        'clerks': clerks,
+        'leave_requests':leave_requests
+        # 'attendance_records': attendance_records,
+    })
 def admin_engineer(request):
     engineers = CustomUser.objects.filter(role='engineer').select_related('engineer_profile')
     return render(request,'panchayath_officer/engineer.html',{'engineers':engineers})
@@ -134,14 +156,19 @@ def delete_clerks(request):
             return JsonResponse({"success": False, "error": str(e)})
     return JsonResponse({"success": False, "error": "Invalid request method."})
 
+from django.http import JsonResponse
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
+from .models import ClerkDocument, EngineerDocument
+
 def document_approval(request):
+    """Retrieve all clerk documents for approval"""
     clerk_documents = ClerkDocument.objects.select_related('engineer_document__user_document').all()
 
     context = {
         'clerk_documents': clerk_documents
     }
-    return render(request,'panchayath_officer/document_approval.html',context)
-
+    return render(request, 'panchayath_officer/document_approval.html', context)
 
 @csrf_exempt
 def approve_clerk_document(request, doc_id):
@@ -177,3 +204,30 @@ def reject_clerk_document(request, doc_id):
         except ClerkDocument.DoesNotExist:
             return JsonResponse({"success": False, "error": "Document not found."})
     return JsonResponse({"success": False, "error": "Invalid request."})
+
+
+@csrf_exempt
+def approve_leave(request, leave_id):
+    if request.method=="POST":
+            leave_request = get_object_or_404(LeaveRequest, id=leave_id)
+            leave_request.status = "Approved"
+            leave_request.save()
+            return JsonResponse({"status": "success"})
+    return JsonResponse({"status": "error", "message": "Invalid request method"})
+    
+# Reject Leave Request
+@csrf_exempt
+def reject_leave(request, leave_id):
+    if request.method == "POST":
+        
+            leave = LeaveRequest.objects.get(id=leave_id)
+            leave.status = "Rejected"
+            leave.save()
+            return JsonResponse({"status": "success"})
+       
+<<<<<<< Updated upstream
+    return JsonResponse({"status": "error", "message": "Invalid request method"})
+>>>>>>> Stashed changes
+=======
+    return JsonResponse({"status": "error", "message": "Invalid request method"})
+>>>>>>> Stashed changes

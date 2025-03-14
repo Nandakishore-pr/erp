@@ -1,6 +1,7 @@
 {% comment %} {% extends "clerk/base.html" %}
 {% load static %}
 {% block content %}
+
 <div class="container mt-5">
     <h2 class="mb-4 text-primary fw-bold">📌 My Attendance</h2>
 
@@ -78,6 +79,25 @@
     </div>
 </div>
 
+<div class="card shadow mb-4 border-0 rounded">
+    <div class="card-header bg-warning text-dark fw-bold">📅 Request Leave</div>
+    <div class="card-body">
+        <form method="POST" action="{% url 'request_leave' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="leave_date" class="form-label fw-bold">Select Date:</label>
+                <input type="date" class="form-control" id="leave_date" name="leave_date" required>
+            </div>
+            <div class="mb-3">
+                <label for="reason" class="form-label fw-bold">Reason:</label>
+                <textarea class="form-control" id="reason" name="reason" rows="3" placeholder="Enter reason for leave" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-warning w-100 fw-bold">Submit Request</button>
+        </form>
+    </div>
+</div>
+
+<!-- Custom Styling -->
 <style>
     .container {
         max-width: 999px;

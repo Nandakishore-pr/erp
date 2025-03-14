@@ -17,4 +17,8 @@ urlpatterns = [
     path("reject-document/<int:document_id>/", views.reject_document, name="reject_document"),
     path("submit-clerk-document/", views.submit_clerk_document, name="submit_clerk_document"),
 
+    path("request-leave/", views.request_leave, name="request_leave"),  # Add this line
+    path("request-leave/", views.request_leave, name="request_leave"),  # Add this line
+
+
     ]

@@ -17,5 +17,9 @@ urlpatterns = [
     path('document_approval/',views.document_approval,name = 'document_approval'),
     path('approve-document/<int:doc_id>/', views.approve_clerk_document, name='approve_clerk_document'),
     path('reject-document/<int:doc_id>/', views.reject_clerk_document, name='reject_clerk_document'),
+    # path("leave-requests/", views.admin_leave_requests, name="admin_leave_requests"),
+    path("approve-leave/<int:leave_id>/", views.approve_leave, name="approve_leave"),
+    path("reject-leave/<int:leave_id>/", views.reject_leave, name="reject_leave"),
+    
 ]
 
