@@ -15,13 +15,17 @@ from django.contrib import messages
 from clerk.models import Attendance
 from clerk.models import LeaveRequest  # Import LeaveRequest from the Clerk app
 from django.contrib import messages
+from django.http import JsonResponse
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
+
 # Create your views here.
 def home(request):
     return render(request,'panchayath_officer/home.html')
 
 def manage(request):
     clerks = ClerkProfile.objects.select_related("user").prefetch_related("attendances").all()
-    leave_requests = LeaveRequest.objects.select_related("clerk").all()
+    leave_requests = LeaveRequest.objects.select_related("clerk").filter(status="Pending")
     # attendance_records = {
     #     clerk.user.id: list(clerk.attendances.all()) for clerk in clerks
     # }
@@ -77,9 +81,6 @@ def reject_engineer(request, engineer_id):
     except Exception as e:
         print(f"❌ Error: {e}")
         return JsonResponse({'error': str(e)}, status=500)
-
-
-    
 
 def revenue(request):
     return render(request,'panchayath_officer/revenue.html')
@@ -149,10 +150,6 @@ def delete_clerks(request):
             return JsonResponse({"success": False, "error": str(e)})
     return JsonResponse({"success": False, "error": "Invalid request method."})
 
-from django.http import JsonResponse
-from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
-from .models import ClerkDocument, EngineerDocument
 
 def document_approval(request):
     """Retrieve all clerk documents for approval"""
@@ -200,26 +197,21 @@ def reject_clerk_document(request, doc_id):
 
 
 @csrf_exempt
-def approve_leave(request, leave_id):
-    if request.method=="POST":
-            leave_request = get_object_or_404(LeaveRequest, id=leave_id)
-            leave_request.status = "Approved"
-            leave_request.save()
-            return JsonResponse({"status": "success"})
-    return JsonResponse({"status": "error", "message": "Invalid request method"})
-    
-# Reject Leave Request
-@csrf_exempt
-def reject_leave(request, leave_id):
+def leave_action(request):
     if request.method == "POST":
-        
-            leave = LeaveRequest.objects.get(id=leave_id)
-            leave.status = "Rejected"
-            leave.save()
-            return JsonResponse({"status": "success"})
-       
+        leave_id = request.POST.get("leave_id")
+        action = request.POST.get("action")
 
-    return JsonResponse({"status": "error", "message": "Invalid request method"})
+        leave = get_object_or_404(LeaveRequest, id=leave_id)
 
+        if action == "approve":
+            leave.status = "approved"
+        elif action == "reject":
+            leave.status = "rejected"
+        else:
+            return JsonResponse({"success": False, "message": "Invalid action."})
+
+        leave.save()
+        return JsonResponse({"success": True})
     
-
+    return JsonResponse({"success": False, "message": "Invalid request."})

@@ -131,36 +131,33 @@
 <div class="container">
     <h2 class="mb-4">Pending Leave Requests</h2>
 
-    <div class="container">
-        <h2 class="mb-4">Pending Leave Requests</h2>
-    
-        {% if leave_requests %}
-            <ul class="list-group" id="leave-list">
-                {% for leave in leave_requests %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center" id="leave-{{ leave.id }}">
-                        <div>
-                            <strong>{{ leave.clerk.user.username }}</strong>  
-                            <span class="text-muted"> - {{ leave.date }}</span>  
-                            <br>
-                            <small class="text-info">{{ leave.reason }}</small>
-                        </div>
-                        <div>
-                            <button class="btn btn-success btn-sm approve-btn" data-id="{{ leave.id }}">
-                                ✅ Approve
-                            </button>
-                            <button class="btn btn-danger btn-sm reject-btn" data-id="{{ leave.id }}">
-                                ❌ Reject
-                            </button>  
-                        </div>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <div class="alert alert-info text-center">
-                No pending leave requests.
-            </div>
-        {% endif %}
-    </div>
+    {% if leave_requests %}
+        <ul class="list-group" id="leave-list">
+            {% for leave in leave_requests %}
+                <li class="list-group-item d-flex justify-content-between align-items-center" id="leave-{{ leave.id }}">
+                    <div>
+                        <strong>{{ leave.clerk.user.username }}</strong>  
+                        <span class="text-muted"> - {{ leave.date }}</span>  
+                        <br>
+                        <small class="text-info">{{ leave.reason }}</small>
+                    </div>
+                    <div>
+                        <button class="btn btn-success btn-sm approve-btn" data-id="{{ leave.id }}">
+                            ✅ Approve
+                        </button>
+                        <button class="btn btn-danger btn-sm reject-btn" data-id="{{ leave.id }}">
+                            ❌ Reject
+                        </button>  
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="alert alert-info text-center">
+            No pending leave requests.
+        </div>
+    {% endif %}
+</div>
     
     
     
@@ -278,7 +275,38 @@
     }
     
 </script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+    $(document).ready(function () {
+        $(".approve-btn, .reject-btn").click(function () {
+            var leaveId = $(this).data("id");
+            var action = $(this).hasClass("approve-btn") ? "approve" : "reject";
+            var button = $(this).closest("li");
+            $.ajax({
+                url: "{% url 'leave_action' %}",
+
+                type: "POST",
+                data: {
+                    "leave_id": leaveId,
+                    "action": action,
+                    "csrfmiddlewaretoken": "{{ csrf_token }}"
+                },
+                success: function (response) {
+                    if (response.success) {
+                        var statusLabel = action === "approve" ? "✅ Approved" : "❌ Rejected";
+                        button.closest("li").html(`<strong>${statusLabel}</strong>`);
+                    } else {
+                        alert("Error: " + response.message);
+                    }
+                },
+                error: function () {
+                    alert("Something went wrong. Try again.");
+                }
+            });
+        });
+    });
+</script>
+{% comment %} <script>
     function getCSRFToken() {
         return document.querySelector('[name=csrfmiddlewaretoken]')?.value || "";
     }
@@ -321,6 +349,6 @@
             });
         });
     });
-</script>
+</script> {% endcomment %}
 
 {% endblock %}

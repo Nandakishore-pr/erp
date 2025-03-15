@@ -1,4 +1,4 @@
-{% comment %} {% extends "clerk/base.html" %}
+{% extends "clerk/base.html" %}
 {% load static %}
 {% block content %}
 
@@ -96,7 +96,42 @@
         </form>
     </div>
 </div>
-
+<div class="card shadow mb-4 border-0 rounded">
+    <div class="card-header bg-warning text-dark fw-bold">📅 My Leave Requests</div>
+    <div class="card-body">
+        
+        {% if leave_requests %}
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Date</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for leave in leave_requests %}
+                <tr>
+                    <td>{{ leave.date }}</td>
+                    <td>{{ leave.reason }}</td>
+                    <td>
+                        {% if leave.status == "Approved" %}
+                            <span class="badge bg-success">✔ Approved</span>
+                        {% elif leave.status == "Rejected" %}
+                            <span class="badge bg-danger">✖ Rejected</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">⏳ Pending</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="text-muted text-center">No leave requests found.</p>
+        {% endif %}
+    </div>
+</div>
 <!-- Custom Styling -->
 <style>
     .container {
@@ -121,4 +156,4 @@
     }
 </style>
 
-{% endblock content %}  {% endcomment %}
+{% endblock content %}  

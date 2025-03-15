@@ -86,9 +86,6 @@ def upload_clerk_profile_image(request):
 
     return redirect('clerk_editprofile')
 
-def attendance(request):
-    return render(request,'clerk/attendance.html')
-
 def document(request):
     clerk_id = request.user.id  # Get the logged-in clerk's ID
     
@@ -191,6 +188,7 @@ def clerk_change_password(request):
         return redirect('clerk_editprofile')  # Redirect to profile or any desired page
 
     return redirect('clerk_editprofile')
+
 # def mark_attendance(request):
 #     if request.method == "POST":
 #         attendance_type = request.POST.get("attendance_type")
@@ -312,12 +310,14 @@ def attendance(request):
     # Fetch morning and afternoon attendance records
     morning_attendance = Attendance.objects.filter(clerk=clerk_profile, date=today, session="Morning").first()
     afternoon_attendance = Attendance.objects.filter(clerk=clerk_profile, date=today, session="Afternoon").first()
+    leave_requests = LeaveRequest.objects.filter(clerk=clerk_profile) # Fetch all leave requests
 
     context = {
         "morning_attendance": morning_attendance.status if morning_attendance else None,
         "morning_time": morning_attendance.time.strftime("%I:%M %p") if morning_attendance else None,
         "afternoon_attendance": afternoon_attendance.status if afternoon_attendance else None,
         "afternoon_time": afternoon_attendance.time.strftime("%I:%M %p") if afternoon_attendance else None,
+        "leave_requests":leave_requests
     }
     
     return render(request, "clerk/attendance.html", context)
@@ -347,3 +347,10 @@ def request_leave(request):
         return redirect("attendance")  # Redirect back to attendance page
 
     return render(request, "attendance.html")
+
+# def leave_status(request):
+    
+#     leave_requests = LeaveRequest.objects.filter(user=request.user) # Fetch all leave requests
+#     print(leave_requests)
+#     return render(request, 'clerk/attendance.html', {'leave_requests': leave_requests})
+

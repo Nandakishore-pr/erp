@@ -6,7 +6,7 @@ urlpatterns = [
     path('', views.home, name='clerkhome'),
     path('editprofile/', views.clerk_editprofile, name='clerk_editprofile'),
     path('attendance/', views.attendance, name='attendance'),
-    # path('mark_attendance/',views.mark_attendance,name = 'mark_attendance'),
+    path('mark_attendance/',views.mark_attendance,name = 'mark_attendance'),
     path('document/', views.document, name='document'),
     path('engineer/', views.engineer, name='engineer'),
     path('request/', views.request, name='request'),
@@ -19,6 +19,6 @@ urlpatterns = [
 
     path("request-leave/", views.request_leave, name="request_leave"),  # Add this line
     path("request-leave/", views.request_leave, name="request_leave"),  # Add this line
-
+    # path("leave_status/", views.leave_status, name="leave_status"),
 
     ]
