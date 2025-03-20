@@ -12,7 +12,7 @@
             <div class="col-lg-3 col-md-6">
                 <div class="card shadow-sm text-white bg-primary text-center p-3">
                     <h6 class="fw-bold">Revenue Collected</h6>
-                    <h2 class="fw-bold">$50,245</h2>
+                    <h2 class="fw-bold">₹{{ total_revenue }}</h2>  <!-- Dynamic Data -->
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
@@ -107,30 +107,46 @@
         }
     </style>
 
-    <!-- Chart Script -->
+    <!-- Chart Script --> <!-- Load Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Revenue Bar Chart
-        var ctx1 = document.getElementById('revenueChart').getContext('2d');
-        var revenueChart = new Chart(ctx1, {
-            type: 'bar',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-                datasets: [{
-                    label: 'Revenue ($)',
-                    data: [10000, 15000, 12000, 18000, 22000],
-                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: { beginAtZero: true }
+        document.addEventListener("DOMContentLoaded", function () {
+            var labels = {{ labels|safe }};
+            var revenueData = {{ revenue_data|safe }};
+    
+            console.log("Labels:", labels);
+            console.log("Revenue Data:", revenueData);
+    
+            var ctx = document.getElementById("revenueChart").getContext("2d");
+    
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Revenue (₹)',
+                        data: revenueData,
+                        borderColor: '#4CAF50',
+                        backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                        borderWidth: 2,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
                 }
-            }
+            });
         });
-
-        // Task Status Pie Chart
+    </script>
+    
+    
+    // Task Status Pie Chart
+    <script>
         var ctx2 = document.getElementById('taskChart').getContext('2d');
         var taskChart = new Chart(ctx2, {
             type: 'pie',
@@ -144,4 +160,5 @@
             options: { responsive: true, maintainAspectRatio: false }
         });
     </script>
+   
 {% endblock %}

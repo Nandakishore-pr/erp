@@ -310,8 +310,8 @@ def attendance(request):
     # Fetch morning and afternoon attendance records
     morning_attendance = Attendance.objects.filter(clerk=clerk_profile, date=today, session="Morning").first()
     afternoon_attendance = Attendance.objects.filter(clerk=clerk_profile, date=today, session="Afternoon").first()
-    leave_requests = LeaveRequest.objects.filter(clerk=clerk_profile) # Fetch all leave requests
-
+    leave_requests = LeaveRequest.objects.filter(clerk=clerk_profile).order_by('-date') # Fetch all leave requests
+    
     context = {
         "morning_attendance": morning_attendance.status if morning_attendance else None,
         "morning_time": morning_attendance.time.strftime("%I:%M %p") if morning_attendance else None,

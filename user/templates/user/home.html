@@ -113,7 +113,7 @@
             <!-- First Chart (Left) -->
             <div class="chart-box">
                 <h3 class="text-center">Graph 1</h3>
-                <canvas id="chart1"></canvas>
+                <canvas id="revenueChart"></canvas>
             </div>
 
             <!-- Second Chart (Right) -->
@@ -124,59 +124,6 @@
         </div>
     </div>
 </div>
-
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const options = {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { labels: { color: 'black' } },
-        },
-        scales: {
-            x: { grid: { color: '#aaa' }, ticks: { color: 'black' } },
-            y: { grid: { color: '#aaa' }, ticks: { color: 'black' } }
-        }
-    };
-
-    const ctx1 = document.getElementById("chart1").getContext("2d");
-    new Chart(ctx1, {
-        type: "bar",
-        data: {
-            labels: ["Jan", "Feb", "Mar", "Apr"],
-            datasets: [{
-                label: "Revenue",
-                data: [10, 20, 30, 40],
-                backgroundColor: ["#FF5733", "#C70039", "#900C3F", "#581845"],
-                borderColor: "black",
-                borderWidth: 1
-            }]
-        },
-        options: options
-    });
-
-    const ctx2 = document.getElementById("chart2").getContext("2d");
-    new Chart(ctx2, {
-        type: "line",
-        data: {
-            labels: ["2019", "2020", "2021", "2022"],
-            datasets: [{
-                label: "Growth",
-                data: [5, 15, 25, 35],
-                backgroundColor: "black",
-                borderColor: "#FFC107",
-                borderWidth: 2,
-                fill: false
-            }]
-        },
-        options: options
-    });
-});
-</script>
-
-<!-- CSS Styling -->
 <style>
     
     .graph-container {
@@ -200,8 +147,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     canvas {
+        
         width: 100%;
         height: 100%;
+        display: block;
+
     }
 </style>
 
@@ -229,22 +179,29 @@ document.addEventListener("DOMContentLoaded", function () {
     
 
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<!-- Store JSON data safely in a script tag -->
+<script type="application/json" id="revenue-data">{{ revenue_data|safe }}</script>
+<script type="application/json" id="labels-data">{{ labels|safe }}</script>
+
 <script>
-    // Graph 1: Bar Chart
-    const ctx1 = document.getElementById('chart1').getContext('2d');
-    new Chart(ctx1, {
-        type: 'bar',
+    // Retrieve and parse JSON safely
+    var revenueData = JSON.parse(document.getElementById('revenue-data').textContent);
+    var labels = JSON.parse(document.getElementById('labels-data').textContent);
+
+    var ctx = document.getElementById('revenueChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
         data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            labels: labels,
             datasets: [{
-                label: 'Monthly Sales',
-                data: [120, 190, 300, 250, 220, 310],
-                backgroundColor: 'rgba(228, 238, 244, 0.6))',
-                borderColor: 'rgb(243, 246, 248)',
-                borderWidth: 1
+                label: 'Revenue',
+                data: revenueData,
+                borderColor: 'blue',
+                backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                borderWidth: 2,
+                fill: true
             }]
         },
         options: {
@@ -256,7 +213,9 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     });
+</script>
 
+<script>
     // Graph 2: Line Chart
     const ctx2 = document.getElementById('chart2').getContext('2d');
     new Chart(ctx2, {

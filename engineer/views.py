@@ -8,6 +8,8 @@ from user.models import UserDocument
 from django.http import JsonResponse
 from .models import EngineerDocument
 # Create your views here.
+def message(request):
+    return render(request,'engineer/message.html')
 
 def engineer_dashboard(request):
     return render(request,'engineer/home.html')

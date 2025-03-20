@@ -115,13 +115,7 @@
                     <td>{{ leave.date }}</td>
                     <td>{{ leave.reason }}</td>
                     <td>
-                        {% if leave.status == "Approved" %}
-                            <span class="badge bg-success">✔ Approved</span>
-                        {% elif leave.status == "Rejected" %}
-                            <span class="badge bg-danger">✖ Rejected</span>
-                        {% else %}
-                            <span class="badge bg-warning text-dark">⏳ Pending</span>
-                        {% endif %}
+                        {{ leave.status }}
                     </td>
                 </tr>
                 {% endfor %}

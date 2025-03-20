@@ -1,4 +1,5 @@
 from django.db import models
+from django.forms import ValidationError
 from common.models import CustomUser  # Importing CustomUser from common app
 
 def user_document_path(instance, filename):
@@ -16,3 +17,37 @@ class UserDocument(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.document.name} - {'Approved' if self.status else 'Pending'}"
+
+
+from django.contrib.auth import get_user_model
+from django.db import models
+
+User = get_user_model()  # Get the custom user model
+
+class TaxPayment(models.Model):
+    TAX_TYPES = [
+        ('Property', 'Property Tax'),
+        ('Water', 'Water Tax'),
+        ('Professional', 'Professional Tax'),
+        ('Other', 'Other'),
+    ]
+
+    PAYMENT_METHODS = [
+        ('UPI', 'UPI'),
+        ('Credit Card', 'Credit Card'),
+        ('Debit Card', 'Debit Card'),
+        ('Net Banking', 'Net Banking'),
+        ('Cash', 'Cash'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE,null=True)  # Link to CustomUser
+    tax_type = models.CharField(max_length=20, choices=TAX_TYPES)
+    year = models.IntegerField(null=True, blank=True)  # Only for Property Tax
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_method = models.CharField(max_length=20, choices=PAYMENT_METHODS)
+    payment_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.tax_type} - ₹{self.amount} - {self.payment_method}"
+
+    
