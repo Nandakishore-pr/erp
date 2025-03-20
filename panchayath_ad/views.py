@@ -18,10 +18,31 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
+from django.core.mail import send_mail
+from user.models import TaxPayment  # Import from user app
+from django.db.models import Sum
+from django.utils.timezone import localdate,timedelta
+
 
 # Create your views here.
 def home(request):
-    return render(request,'panchayath_officer/home.html')
+    total_revenue = TaxPayment.objects.aggregate(total=Sum('amount'))['total'] or 0
+    daily_revenue = TaxPayment.objects.filter(payment_date__date=localdate()).aggregate(total=Sum('amount'))['total'] or 0
+
+    revenue_data = []
+    labels = []
+    for i in range(6, -1, -1):  # Last 7 days
+        day = localdate() - timedelta(days=i)
+        revenue = TaxPayment.objects.filter(payment_date__date=day).aggregate(total=Sum('amount'))['total'] or 0
+        revenue_data.append(float(revenue))
+        labels.append(day.strftime('%d %b'))  # Format: 14 Mar, 15 Mar, etc.
+        
+    return render(request,'panchayath_officer/home.html',{
+        'total_revenue': total_revenue,
+        'daily_revenue': daily_revenue,
+        'revenue_data': revenue_data,
+        'labels': labels
+    })
 
 def manage(request):
     clerks = ClerkProfile.objects.select_related("user").prefetch_related("attendances").all()
@@ -82,8 +103,8 @@ def reject_engineer(request, engineer_id):
         print(f"❌ Error: {e}")
         return JsonResponse({'error': str(e)}, status=500)
 
-def revenue(request):
-    return render(request,'panchayath_officer/revenue.html')
+# def revenue(request):
+#     return render(request,'panchayath_officer/revenue.html')
 
 def admin_task(request):
     return render(request, 'panchayath_officer/task.html')
@@ -125,6 +146,14 @@ def add_clerk(request):
             clerk.set_password(password)  # Hash the password
             print(password)
             clerk.save()
+
+            # Send email with password
+            subject = "Your Clerk Account Credentials"
+            message = f"Hello {name},\n\nYour clerk account has been created successfully.\n\nLogin Details:\nEmail: {email}\nPassword: {password}\n\nPlease change your password after logging in.\n\nThank you!"
+            from_email = "your_email@gmail.com"  # Replace with your Gmail ID
+            recipient_list = [email]
+
+            send_mail(subject, message, from_email, recipient_list, fail_silently=False)
 
             return JsonResponse({"success": True, "message": "Clerk added successfully!"})
         except Exception as e:
@@ -215,3 +244,15 @@ def leave_action(request):
         return JsonResponse({"success": True})
     
     return JsonResponse({"success": False, "message": "Invalid request."})
+
+def tax_payments_list(request):
+    today=localdate()
+    daily_revenue = TaxPayment.objects.filter(payment_date__date=today).aggregate(total=Sum('amount'))['total'] or 0
+    total_revenue = TaxPayment.objects.aggregate(total=Sum('amount'))['total'] or 0
+
+    tax_payments = TaxPayment.objects.all().order_by('-payment_date')  # Fetch all tax payments
+    return render(request, 'panchayath_officer/tax_payment_list.html', 
+    {'tax_payments': tax_payments,
+    'daily_revenue': daily_revenue,
+    'total_revenue': total_revenue
+    },)

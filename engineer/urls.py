@@ -10,5 +10,6 @@ urlpatterns = [
     path('doc_wrk/', views.doc_wrk, name='doc_wrk'),
     path('change-password/', views.change_password, name='change_password'),
     path('upload-profile-image/', views.upload_profile_image, name='upload_profile_image'),
+    path('message/',views.message,name='message'),
 
  ]

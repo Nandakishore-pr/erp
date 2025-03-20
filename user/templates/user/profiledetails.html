@@ -120,19 +120,23 @@
                 <table class="table text-white">
                     <thead>
                         <tr>
+                            <th>#</th>
+                            <th>Tax Type</th>
                             <th>Year</th>
-                            <th>Amount Paid</th>
+                            <th>Amount (₹)</th>
+                            <th>Payment Method</th>
                             <th>Payment Date</th>
-                            <th>Receipt</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for tax in taxes %}
+                        {% for payment in recent_payments %}
                         <tr>
-                            <td>{{ tax.year }}</td>
-                            <td>₹{{ tax.amount }}</td>
-                            <td>{{ tax.payment_date }}</td>
-                            <td><a href="{{ tax.receipt.url }}" class="text-white" target="_blank">View Receipt</a></td>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ payment.get_tax_type_display }}</td>
+                            <td>{{ payment.year|default:"N/A" }}</td>
+                            <td>₹{{ payment.amount }}</td>
+                            <td>{{ payment.get_payment_method_display }}</td>
+                            <td>{{ payment.payment_date|date:"d M Y, H:i" }}</td>
                         </tr>
                         {% empty %}
                         <tr>

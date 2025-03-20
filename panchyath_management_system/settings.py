@@ -82,8 +82,12 @@ WSGI_APPLICATION = 'panchyath_management_system.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'erp',
+        'USER': 'postgres',
+        'PASSWORD': 'root',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
@@ -135,3 +139,14 @@ AUTH_USER_MODEL = 'common.CustomUser'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "jithinkarikkamuri@gmail.com"  # Replace with your Gmail ID
+EMAIL_HOST_PASSWORD = "hbjo mzcu smfg nmiy"  # Use an App Password
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+STRIPE_SECRET_KEY = "sk_test_51R4kZCBFjnvExNSEnABk3rpoQ0X4KcvtDfdRfX4ggxfyRn3xseaWfDFpYU7j4CWTOkM8wbjJGi2048kIDc4HexzL00vrMJmv4K"
+STRIPE_PUBLIC_KEY = "pk_test_51R4kZCBFjnvExNSEuqjWufT8Fgo4Si4Iyo0sWo4dQ6mFQD9XF6ZM6EVzt1GhubkAgri4Uwx1lOo7M0JOgVjdQzUb00F6nqGBTY"

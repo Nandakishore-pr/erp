@@ -1,0 +1,60 @@
+{% extends 'panchayath_officer/base.html' %}
+
+{% block title %}Revenue Management{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h2 class="text-center mt-4 mb-4">Revenue Management</h2>
+    
+    <!-- Daily and Total Revenue Overview -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card text-white bg-primary p-3 text-center">
+                <h5>Daily Revenue</h5>
+                <h2 class="fw-bold">₹{{ daily_revenue }}</h2>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card text-white bg-success p-3 text-center">
+                <h5>Total Revenue</h5>
+                <h2 class="fw-bold">₹{{ total_revenue }}</h2>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Revenue Collection Table -->
+    <div class="container mt-5">
+        <h2 class="text-center fw-bold">Tax Payments</h2>
+        <table class="table table-bordered table-hover mt-3">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>User</th>
+                    <th>Tax Type</th>
+                    <th>Year</th>
+                    <th>Amount (₹)</th>
+                    <th>Payment Method</th>
+                    <th>Payment Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in tax_payments %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ payment.user.username }}</td>
+                    <td>{{ payment.get_tax_type_display }}</td>
+                    <td>{{ payment.year|default:"N/A" }}</td>
+                    <td>₹{{ payment.amount }}</td>
+                    <td>{{ payment.get_payment_method_display }}</td>
+                    <td>{{ payment.payment_date|date:"d M Y, H:i" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center">No tax payments found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
