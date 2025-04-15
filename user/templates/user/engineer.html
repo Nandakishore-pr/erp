@@ -36,7 +36,10 @@
                     <a href="{% url 'document_upload' engineer.user.id %}" class="btn btn-success w-100 fw-bold">
                         Go Through With Documentation
                     </a>
-                    <a href="#" class="btn btn-outline-primary w-100 mt-2 fw-bold">Chat</a>
+                    <a href="{% url 'create_chat_request' engineer_id=engineer.user.id %}" 
+                    class="btn btn-outline-primary w-100 mt-2 fw-bold">
+                     Chat
+                 </a>
                 </div>
             </div>
         </div>

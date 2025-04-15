@@ -13,3 +13,14 @@ class EngineerDocument(models.Model):
     additional_document = models.FileField(upload_to=engineer_document_path)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     status = models.BooleanField(default=False)
+
+
+class ClerkToEngineerSuggestion(models.Model):
+    document = models.ForeignKey(EngineerDocument, on_delete=models.CASCADE, related_name="clerk_suggestions")
+    clerk = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="sent_engineer_suggestions")
+    engineer = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="received_clerk_suggestions")
+    suggestion = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Suggestion from {self.clerk} to {self.engineer}"

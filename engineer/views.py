@@ -1,16 +1,30 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from common.models import EngineerProfile,CustomUser
+from clerk.models import AdminToClerkSuggestion, ClerkDocument
+from common.models import EngineerProfile,CustomUser,Message
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth import update_session_auth_hash
 from user.models import UserDocument
 from django.http import JsonResponse
-from .models import EngineerDocument
+from .models import ClerkToEngineerSuggestion, EngineerDocument
+from django.contrib import messages
+from django.db.models import Q
+from django.template.loader import render_to_string
+
+
 # Create your views here.
 
 def engineer_dashboard(request):
     return render(request,'engineer/home.html')
+
+
+# @login_required
+# def engineer_chat(request):
+#     messages = Message.objects.filter(
+#         Q(sender=request.user) | Q(receiver=request.user)
+#     ).order_by("timestamp")
+#     return render(request, "engineer/chat.html", {"user_id": request.user.id,"messages": messages})
 
 def editprofile(request):
     return render(request, 'engineer/editprofile.html')
@@ -18,7 +32,6 @@ def editprofile(request):
 def employees(request):
     clerks = CustomUser.objects.filter(role='clerk')
     return render(request, 'engineer/employees.html',{"clerks":clerks})
-from django.contrib import messages
 
 @login_required
 def doc_wrk(request):
@@ -165,3 +178,12 @@ def upload_profile_image(request):
         messages.error(request, "Please select a valid image file.")
 
     return redirect('engineer_editprofile')
+
+
+def engineer_chat_view(request):
+    return render(request, "engineer/chat.html")
+
+
+def doc_approved(request):
+    suggestions = ClerkToEngineerSuggestion.objects.all()  # Or filter as needed
+    return render(request, 'engineer/documents_approved.html', {'suggestions': suggestions})

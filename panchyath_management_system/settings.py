@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'clerk',
     'panchayath_ad',
     'common',
-    
+    'chat'
 ]
 
 MIDDLEWARE = [
@@ -75,7 +75,13 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'panchyath_management_system.wsgi.application'
+ASGI_APPLICATION = 'panchyath_management_system.asgi.application'
 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -135,3 +141,9 @@ AUTH_USER_MODEL = 'common.CustomUser'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+
+PUSHER_APP_ID = '1971627'
+PUSHER_KEY = '9815c772593211e4428f'
+PUSHER_SECRET = '576a44b59445a4f852ba'
+PUSHER_CLUSTER = 'ap2'

@@ -7,7 +7,7 @@ from django.http import JsonResponse, HttpResponseNotFound
 import random
 import string
 import json
-from clerk.models import ClerkDocument
+from clerk.models import AdminToClerkSuggestion, ClerkDocument
 from engineer.models import EngineerDocument
 from clerk.models import Attendance
 from clerk.models import LeaveRequest  # Import LeaveRequest from the Clerk app
@@ -215,3 +215,17 @@ def leave_action(request):
         return JsonResponse({"success": True})
     
     return JsonResponse({"success": False, "message": "Invalid request."})
+
+def send_admin_suggestion(request):
+    if request.method == 'POST':
+        doc_id = request.POST.get('document_id')
+        text = request.POST.get('suggestion')
+        doc = get_object_or_404(ClerkDocument, id=doc_id)
+
+        AdminToClerkSuggestion.objects.create(
+            document=doc,
+            admin=request.user,
+            clerk=doc.clerk,
+            suggestion=text
+        )
+    return redirect('document_approval')

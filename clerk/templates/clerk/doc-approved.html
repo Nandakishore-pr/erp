@@ -1,0 +1,42 @@
+{% extends "clerk/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-primary fw-bold text-center">📜 Document Verification</h2>
+
+    <!-- Uploaded Documents List -->
+    <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+        <div class="card-header bg-gradient text-white fw-bold text-center" style="background: linear-gradient(45deg, #007bff, #6610f2);">
+            <h5 class="mb-0" style="color:black">📄 Final Approved Documents</h5>
+        </div>
+        <div class="card-body p-4">
+            <table class="table table-hover table-bordered text-center align-middle shadow-sm">
+                <thead class="table-dark">
+                    <tr>
+                        <th>📑 Document ID</th>
+                        <th>📝 Description</th>
+                        <th>📄 Clerk Document ID</th>
+                        <th>📊 Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for doc in admin_docs %}
+                    <tr>
+                        <td>ADM-DOC-{{ doc.id }}</td>
+                        <td>{{ doc.suggestion }}</td>
+                        <td>DOC-{{ doc.clerk.id }}</td>
+                        <td>
+                            <span class="badge bg-danger">❌ Rejected</span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-muted">No documents available.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>        
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,65 @@
+{% extends "engineer/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-primary fw-bold text-center">Chat Requests</h2>
+
+    <table class="table table-bordered" id="chat-requests-table">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Messages Received</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for request in chat_requests %}
+            <tr id="request-{{ request.room_name }}">
+                <td>{{ request.user.username }}</td>
+                <td id="messages-received-{{ request.room_name }}">
+                    {% if request.user_message_count == 0 %}
+                        No messages
+                    {% elif request.user_message_count == 1 %}
+                        1 message
+                    {% else %}
+                        {{ request.user_message_count }} messages
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'chat_room' room_name=request.room_name username=request.engineer.username %}" 
+                       class="btn btn-primary">Chat</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Include Pusher JS Library -->
+<script src="https://js.pusher.com/8.0/pusher.min.js"></script>
+<script>
+    // Initialize Pusher
+    const pusher = new Pusher('9815c772593211e4428f', {
+        cluster: 'ap2',
+        encrypted: true
+    });
+
+    // Subscribe to the chat-requests channel
+    const channel = pusher.subscribe('chat-requests');
+
+    // Listen for new user messages
+    channel.bind('new_user_message', function(data) {
+        const roomName = data.room_name;
+        const messageId = `#messages-received-${roomName}`;
+        const currentText = document.querySelector(messageId).innerText;
+
+        // Update the "Messages Received" section
+        if (currentText === 'No messages') {
+            document.querySelector(messageId).innerText = '1 message';
+        } else {
+            const count = parseInt(currentText.split(' ')[0]) + 1;
+            document.querySelector(messageId).innerText = `${count} messages`;
+        }
+    });
+</script>
+{% endblock content %}

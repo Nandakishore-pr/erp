@@ -19,6 +19,7 @@
                     <th>clerk</th>
                     <th>status</th>
                     <th>Actions</th>
+                    <th>Suggestion</th>
                 </tr>
             </thead>
             <tbody>
@@ -56,6 +57,34 @@
                             <span class="text-muted">Approved</span>
                         {% endif %}
                     </td>
+                    <td>
+                        {% if doc.status %}
+                        <button class="btn btn-danger btn-sm " style="filter: blur(1px);opacity: 0.9;" disabled >Suggestion</button>
+                        {% else %}
+                        <button class="btn btn-danger btn-sm" onclick="openSuggestionModal({{ doc.id }})">Suggestion</button>
+                        {% endif %}
+                    </td>
+                    <div class="modal fade" id="suggestionModal" tabindex="-1" aria-labelledby="suggestionModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <form method="POST" action="{% url 'send_admin_suggestion' %}">
+                              {% csrf_token %}
+                              <div class="modal-header">
+                                <h5 class="modal-title">Submit Suggestion</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <textarea name="suggestion" class="form-control" rows="5" placeholder="Enter your suggestion..." required></textarea>
+                                <input type="hidden" name="document_id" id="documentIdInput">
+                              </div>
+                              <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                    </div>
                 </tr>
                 {% empty %}
                 <tr>
@@ -67,6 +96,16 @@
         </table>
     </div>
 </div>
+
+
+<script>
+    function openSuggestionModal(documentId) {
+      document.getElementById('documentIdInput').value = documentId;
+      const modal = new bootstrap.Modal(document.getElementById('suggestionModal'));
+      modal.show();
+    }
+  </script>
+  
 
 <script>
     function deleteTask(taskId) {

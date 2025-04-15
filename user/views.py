@@ -1,13 +1,16 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
-from common.models import EngineerProfile,Profile,CustomUser
+from common.models import EngineerProfile,Profile,CustomUser,Message
 import random
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.contrib.auth.decorators import login_required
 from .models import UserDocument
+from clerk.models import VideoCall
+from django.utils.timezone import now
+from django.db.models import Q
 
 
 def home(request):
@@ -32,13 +35,18 @@ def employee(request):
 
 @login_required
 def document_upload(request,engineer_id):
-    return render(request, 'user/document-upload.html', {"engineer_id": engineer_id})
+    messages = Message.objects.filter(
+        Q(sender=request.user) | Q(receiver=request.user)
+    ).order_by("timestamp")
+    return render(request, 'user/document-upload.html', {"engineer_id": engineer_id,"user_id": request.user.id,"messages": messages})
 
 def paytax(request):
     return render(request, 'user/paytax.html')
 
 def profiledetails(request):
-    return render(request,'user/profiledetails.html')
+    video_calls = VideoCall.objects.filter(user=request.user, scheduled_time__gte=now())
+    
+    return render(request,'user/profiledetails.html', {"video_calls": video_calls})
 
 @login_required
 def upload_document(request):
@@ -91,3 +99,4 @@ def chatbot_response(request):
         
         bot_reply = responses.get(user_message, ["I'm not sure, but I'm learning!"])
         return JsonResponse({"response": random.choice(bot_reply)})
+    
