@@ -21,11 +21,9 @@ urlpatterns = [
     # path("approve-leave/<int:leave_id>/", views.approve_leave, name="approve_leave"),
     # path("reject-leave/<int:leave_id>/", views.reject_leave, name="reject_leave"),
     path('leave-action/', views.leave_action, name='leave_action'),
-<<<<<<< HEAD
+
     path('resolved/<int:complaint_id>', views.resolve_complaint, name='resolve_complaint'),
 
-=======
     path('send-clerk-suggestion/', views.send_admin_suggestion, name='send_admin_suggestion'),
->>>>>>> video_and_chat
 ]
 

@@ -325,7 +325,7 @@ def leave_action(request):
     
     return JsonResponse({"success": False, "message": "Invalid request."})
 
-<<<<<<< HEAD
+
 def tax_payments_list(request):
     today=localdate()
     daily_revenue = TaxPayment.objects.filter(payment_date__date=today).aggregate(total=Sum('amount'))['total'] or 0
@@ -337,7 +337,7 @@ def tax_payments_list(request):
     'daily_revenue': daily_revenue,
     'total_revenue': total_revenue
     },)
-=======
+
 def send_admin_suggestion(request):
     if request.method == 'POST':
         doc_id = request.POST.get('document_id')
@@ -351,4 +351,3 @@ def send_admin_suggestion(request):
             suggestion=text
         )
     return redirect('document_approval')
->>>>>>> video_and_chat

@@ -11,11 +11,7 @@ urlpatterns = [
     path('about/', views.about, name='about'),
     path('employee/', views.employee, name='employee'),
     path('document_upload/<int:engineer_id>/', views.document_upload, name='document_upload'),
-<<<<<<< HEAD
     path('paytax/',views.tax_payment_view, name='paytax'),
-=======
-    path('paytax/',views.paytax, name='paytax'),
->>>>>>> video_and_chat
     path('profiledetails/', views.profiledetails, name='profiledetails'),
     path("edit-profile/", views.edit_profile, name="edit_profile"),
     path("upload/", views.upload_document, name="upload_document"),

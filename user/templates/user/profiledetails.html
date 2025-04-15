@@ -199,7 +199,6 @@
             
 
             <div class="card-custom bg-yellow">
-<<<<<<< HEAD
                 <h2>Upcoming Video Calls</h2>
                 <ul id="video-call-list">
                     {% for call in video_calls %}
@@ -210,20 +209,7 @@
                     {% endfor %}
                     </ul>
             
-=======
-                    <h2>Upcoming Video Calls</h2>
-                    <ul id="video-call-list">
-                        {% for call in video_calls %}
-                            <li>
-                                Call with {{ call.clerk.username }} at {{ call.scheduled_time }} 
-                                <button onclick="startCall('{{ call.meeting_link }}')">Join Call</button>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                
-                
-            </div>
->>>>>>> video_and_chat
+
         </div>
       
         </div>
@@ -239,7 +225,6 @@
     function startCall(meetingLink) {
         window.open(meetingLink, "_blank");
     }
-<<<<<<< HEAD
 </script>
 
 <script>
@@ -262,8 +247,6 @@
     }
 
     setInterval(checkForNewCalls, 60000); // Check every 60 seconds
-=======
->>>>>>> video_and_chat
 </script>
 
 <script>
