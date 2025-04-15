@@ -21,6 +21,7 @@ urlpatterns = [
     # path("approve-leave/<int:leave_id>/", views.approve_leave, name="approve_leave"),
     # path("reject-leave/<int:leave_id>/", views.reject_leave, name="reject_leave"),
     path('leave-action/', views.leave_action, name='leave_action'),
+    path('resolved/<int:complaint_id>', views.resolve_complaint, name='resolve_complaint'),
 
 ]
 

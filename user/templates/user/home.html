@@ -4,9 +4,21 @@
 <div class="marquee-container">
     <div class="notice-box">NOTICE</div>
     <div class="marquee">
-        <span class="marquee-content">🚨 Panchayath Tax Payment Deadline: March 15th! ⚡ Apply for property approvals online now! 📢</span>
+        <span class="marquee-content">
+            {% for notice in notices %}
+            <span class="marquee-item">
+                📢 <strong>{{ notice.title }}</strong>: {{ notice.description }}
+                {% if notice.image %}
+                    <img src="{{ notice.image.url }}" alt="notice image" style="height:90px; margin: 0 90px;">
+                {% endif %}
+            </span>
+
+                &nbsp;&nbsp;&nbsp;&nbsp;
+            {% endfor %}
+        </span>
     </div>
 </div>
+
 
 <!-- Section 1: Carousel -->
 <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
@@ -52,53 +64,52 @@
 .marquee-container {
     display: flex;
     align-items: center;
-    background: #222;
-    color: white;
-    padding: 15px 0; /* Increased padding */
-    border-radius: 0;
-    overflow: hidden;
-    width: 100%;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-    margin: 20px auto;
-    height: 60px; /* Increased height */
-    z-index: 1000;
-    position: relative; /* Keep it below navbar */
-    margin-top: 5px;
+    background-color: #f8f9fa;
+    padding: 12px 20px;
+    border: 1px solid #ddd;
+    font-family: 'Segoe UI', sans-serif;
+
 }
 
 .notice-box {
-    background: Black;
-    color: white;
     font-weight: bold;
-    padding: 18px 35px; /* Enlarged padding */
-    font-size: 1.6em; /* Larger font */
-    text-transform: uppercase;
-    border-radius: 8px 0 0 8px;
-    white-space: nowrap;
+    background: #007bff;
+    color: white;
+    padding: 6px 14px;
+    margin-right: 12px;
 }
 
 .marquee {
-    flex: 1;
     overflow: hidden;
-    position: relative;
     white-space: nowrap;
-    
-    font-size: 1.3em; /* Slightly bigger text */
+    flex-grow: 1;
 }
 
 .marquee-content {
     display: inline-block;
     padding-left: 100%;
-    animation: scrollText 5s linear infinite;
+    animation: marquee 20s linear infinite;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+.marquee-item {
+    margin-right: 60px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
 }
 
-@keyframes scrollText {
-    from {
-        transform: translateX(100%);
-    }
-    to {
-        transform: translateX(-100%);
-    }
+.notice-image {
+    height: 60px;
+    width: auto;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+@keyframes marquee {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(-100%, 0); }
 }
 
 </style>

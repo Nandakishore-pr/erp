@@ -56,7 +56,7 @@ class Profile(models.Model):
     address = models.CharField(max_length=50,blank=True,null=True)
     house_number = models.CharField(max_length=50, blank=True, null=True)
     ward_number = models.CharField(max_length=50, blank=True, null=True)
-
+    fcm_token = models.CharField(max_length=255, blank=True , null=True)
     def __str__(self):
         return f"{self.user.username}'s Profile"
 
