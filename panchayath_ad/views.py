@@ -22,10 +22,44 @@ from django.core.mail import send_mail
 from user.models import TaxPayment  # Import from user app
 from django.db.models import Sum
 from django.utils.timezone import localdate,timedelta
-
+from.models import AdminDocument, Notice
+from user.models import Complaint 
+from django.db.models import Q, Sum
+from django.utils.timezone import localdate
+from datetime import timedelta
+from django.shortcuts import render, get_object_or_404, redirect
+from django.core.paginator import Paginator
+from .models import Message
 
 # Create your views here.
 def home(request):
+    complaints = Complaint.objects.exclude(status='Resolved').order_by('-created_at')
+    search_query = request.GET.get('search', '')
+    ward = request.GET.get('ward')
+    date = request.GET.get('date')
+
+    if search_query:
+        complaints = complaints.filter(
+            Q(user__username__icontains=search_query) |
+            Q(category__icontains=search_query) |
+            Q(ward__icontains=search_query)
+        )
+    if ward:
+        complaints = complaints.filter(ward=ward)
+    if date:
+        complaints = complaints.filter(created_at__date=date)
+
+    paginator = Paginator(complaints, 10)
+    page = request.GET.get('page')
+    complaints = paginator.get_page(page)
+
+    # Complaint dashboard stats
+    resolved = Complaint.objects.filter(status="Resolved").count()
+    pending = Complaint.objects.filter(status="Pending").count()
+    under_review = Complaint.objects.filter(status="Under Review").count()
+    wards = Complaint.objects.values_list('ward', flat=True).distinct()
+
+    
     total_revenue = TaxPayment.objects.aggregate(total=Sum('amount'))['total'] or 0
     daily_revenue = TaxPayment.objects.filter(payment_date__date=localdate()).aggregate(total=Sum('amount'))['total'] or 0
 
@@ -41,8 +75,33 @@ def home(request):
         'total_revenue': total_revenue,
         'daily_revenue': daily_revenue,
         'revenue_data': revenue_data,
-        'labels': labels
+        'labels': labels,
+        'complaints': complaints,
+        'resolved': resolved,
+        'pending': pending,
+        'under_review': under_review,
+        'wards': wards,
     })
+
+def resolve_complaint(request, complaint_id):
+    complaint = get_object_or_404(Complaint, id=complaint_id)
+    if request.method == 'POST':
+        message_text = request.POST.get('message')
+
+        if message_text:
+            complaint.status = 'Resolved'
+            complaint.save()
+
+        Message.objects.create(
+                sender = CustomUser.objects.get(role='admin'),
+                recipient=complaint.user,
+                message=message_text
+            )
+        messages.success(request, f"Complaint #{complaint.id} resolved successfully!")
+        return redirect('admindashboard')
+    else:
+            messages.error(request, 'Please enter a message before submitting.')
+    return render(request, 'panchayath_officer/home.html', {'complaint': complaint})
 
 def manage(request):
     clerks = ClerkProfile.objects.select_related("user").prefetch_related("attendances").all()
@@ -110,6 +169,27 @@ def admin_task(request):
     return render(request, 'panchayath_officer/task.html')
 
 def notice(request):
+
+    if request.method == 'POST':
+        title = request.POST['title']
+        description = request.POST['description']
+        recipient = request.POST['recipient']
+        date = request.POST['date']
+        image = request.FILES.get('image')
+
+        notice = Notice(
+            title=title,
+            description=description,
+            recipient=recipient,
+            date=date
+        )
+        
+        if image:
+            notice.image = image
+        
+        notice.save()
+        messages.success(request, 'Notice Published!')
+        return redirect('notice')
     return render(request, 'panchayath_officer/notice.html')
 
 def admineditprofile(request):

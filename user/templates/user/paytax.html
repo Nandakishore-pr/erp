@@ -77,45 +77,53 @@
     <div class="card shadow-lg border-0" style="max-width: 500px; width: 100%;">
         <div class="card-body p-4">
             <h3 class="text-center fw-bold text-success mb-3">Tax Payment</h3>
-            <form method="POST" onsubmit="return validateForm();">
-                {% csrf_token %}
+                <form method="POST" onsubmit="return validateForm();">
+                    {% csrf_token %}
 
-                <div class="mb-3">
-                    <label for="tax_type" class="form-label fw-bold">Tax Type</label>
-                    <select class="form-select shadow-sm border-primary" id="tax_type" name="tax_type" required onchange="updateTaxDetails()">
-                        <option value="" disabled selected>Select Tax Type</option>
-                        <option value="Property">Property Tax</option>
-                        <option value="Water">Water Tax</option>
-                        <option value="Professional">Professional Tax</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
+                    <div class="mb-3">
+                        <label for="tax_type" class="form-label fw-bold">Tax Type</label>
+                        <select class="form-select shadow-sm border-primary" id="tax_type" name="tax_type" required onchange="updateTaxDetails()">
+                            <option value="" disabled selected>Select Tax Type</option>
+                            <option value="Property">Property Tax</option>
+                            <option value="Water">Water Tax</option>
+                            <option value="Professional">Professional Tax</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
 
-                <!-- Year Field (Hidden by Default) -->
-                <div class="mb-3" id="year_field" style="display: none;">
-                    <label for="year" class="form-label fw-bold">Select Year</label>
-                    <select class="form-select shadow-sm border-primary" id="year" name="year"></select>
-                </div>
+                    <!-- Year Field (Hidden by Default) -->
+                    <div class="mb-3" id="year_field" style="display: none;">
+                        <label for="year" class="form-label fw-bold">Select Year</label>
+                        <select class="form-select shadow-sm border-primary" id="year" name="year"></select>
+                    </div>
 
-                <div class="mb-3">
-                    <label for="amount" class="form-label fw-bold">Tax Amount (₹)</label>
-                    <input type="number" class="form-control shadow-sm border-primary" id="amount" name="amount" required readonly>
+                    <div class="mb-3">
+                        <label for="amount" class="form-label fw-bold">Tax Amount (₹)</label>
+                        <input type="number" class="form-control shadow-sm border-primary" id="amount" name="amount" required readonly>
+                    </div>
+                    <div class="text-center">
+                        <button type="button" id="checkout-button" class="btn btn-success w-100 fw-bold shadow-sm">💰 Pay Now</button>
+                    </div>
+                </form>
+                
+                {% if tax_payment %}
+                <input type="hidden" id="tax-payment-id" value="{{ tax_payment.id }}">
+                <div class="text-center mt-3">
+                    <button type="button" id="checkout-button" class="btn btn-dark w-100 fw-bold shadow-sm">💰 Pay Now</button>
                 </div>
-            </form>
-            <div class="text-center">
-                <button id="checkout-button" class="btn btn-success w-100 fw-bold shadow-sm">💰 Pay Now</button>
+                {% endif %}
+               
+
+                {% if messages %}
+                    <div class="mt-3">
+                        {% for message in messages %}
+                            <div class="alert alert-success text-center">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
-
-            {% if messages %}
-                <div class="mt-3">
-                    {% for message in messages %}
-                        <div class="alert alert-success text-center">{{ message }}</div>
-                    {% endfor %}
-                </div>
-            {% endif %}
         </div>
     </div>
-</div>
 
 <script>
     function updateTaxDetails() {
@@ -167,18 +175,30 @@
 
 <script src="https://js.stripe.com/v3/"></script>
 <script>
-  let stripe = Stripe("pk_test_51R4kZCBFjnvExNSEuqjWufT8Fgo4Si4Iyo0sWo4dQ6mFQD9XF6ZM6EVzt1GhubkAgri4Uwx1lOo7M0JOgVjdQzUb00F6nqGBTY"); // Replace with your actual Stripe public key
+  var stripe = Stripe("pk_test_51R4kZCBFjnvExNSEuqjWufT8Fgo4Si4Iyo0sWo4dQ6mFQD9XF6ZM6EVzt1GhubkAgri4Uwx1lOo7M0JOgVjdQzUb00F6nqGBTY"); // Replace with your actual Stripe public key
 
+  function getCSRFToken(){
+    return document.cookie.split('; ')
+        .find(row => row.startsWith("csrftoken="))
+        ?.split('=')[1] || "";
+}
   document.getElementById("checkout-button").addEventListener("click", function () {
+    let taxPaymentInput = document.getElementById("tax-payment-id");
+
+    if (!taxPaymentInput || !taxPaymentInput.value) {
+        alert("Error: Tax Payment ID is missing. Please fill out the form first.");
+        return;
+    }
+
+    let taxPaymentId = taxPaymentInput.value;
     let csrftoken = getCSRFToken();
 
-    fetch("/paytax/", {
+    fetch(`/create-checkout-session/${taxPaymentId}/`, {  
         method: "POST",
         headers: {
             "Content-Type": "application/json",
             "X-CSRFToken": csrftoken,
-        },
-        body: JSON.stringify({})
+        }
     })
     .then(response => {
         if (!response.ok) {
@@ -187,27 +207,11 @@
         return response.json();
     })
     .then(session => {
-        console.log("Session ID:", session.id);  // Debugging
+        console.log("Session ID:", session.id);
         return stripe.redirectToCheckout({ sessionId: session.id });
     })
-    .catch(error => console.error("Error in fetch:", error));  // Debugging
+    .catch(error => console.error("Error in fetch:", error));
 });
-
-
-  // Function to get CSRF token from cookies
-  function getCSRFToken() {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== "") {
-      document.cookie.split(";").forEach(cookie => {
-        let trimmedCookie = cookie.trim();
-        if (trimmedCookie.startsWith("csrftoken=")) {
-          cookieValue = trimmedCookie.substring("csrftoken=".length);
-        }
-      });
-    }
-    return cookieValue;
-  }
-</script>
-
-
+    </script>
+    
 {% endblock content %}

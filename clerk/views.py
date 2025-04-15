@@ -6,9 +6,10 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth import update_session_auth_hash
 from django.shortcuts import render, redirect
 from django.utils import timezone
-from .models import Attendance
-from common.models import ClerkProfile
-
+from .models import Attendance,VideoCall
+from common.models import ClerkProfile,CustomUser
+import string
+import random
 from engineer.models import EngineerDocument
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -86,13 +87,50 @@ def upload_clerk_profile_image(request):
 
     return redirect('clerk_editprofile')
 
+def generate_meeting_id():
+    """Generate a random Jitsi meeting ID"""
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+
 def document(request):
     clerk_id = request.user.id  # Get the logged-in clerk's ID
     
     # Fetch documents assigned to this clerk
     documents = EngineerDocument.objects.filter(clerk_id=clerk_id).select_related("engineer", "user_document")
 
-    return render(request,'clerk/document.html',{"documents": documents})
+    users = CustomUser.objects.filter(role="user")  # Fetch users for scheduling
+    clerk_video_calls = VideoCall.objects.filter(clerk=request.user)
+
+    if request.method == "POST":
+        user_id = request.POST.get("user_id")
+        scheduled_time = request.POST.get("scheduled_time")
+        clerk = request.user  # Clerk scheduling the call
+
+        try:
+            user = CustomUser.objects.get(id=user_id)
+            meeting_id = generate_meeting_id()
+            meeting_link = f"https://meet.jit.si/{meeting_id}?config.prejoinPageEnabled=false&config.requireDisplayName=false&config.disableModeratorIndicator=true&config.startAudioOnly=true"
+
+
+            video_call = VideoCall.objects.create(
+                clerk=clerk,
+                user=user,
+                scheduled_time=scheduled_time,
+                meeting_link=meeting_link
+            )
+
+            messages.success(request, f"Video call scheduled with {user.username} at {scheduled_time}")
+
+        except CustomUser.DoesNotExist:
+            messages.error(request, "User not found!")
+
+
+    context = {
+        "documents": documents,
+        "users":users,
+        "clerk_video_calls": clerk_video_calls,
+    }
+
+    return render(request,'clerk/document.html',context)
 
 
 @csrf_exempt

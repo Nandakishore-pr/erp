@@ -6,6 +6,7 @@ from datetime import date
 from common.models import ClerkProfile
 from engineer.models import EngineerDocument
 from common.models import CustomUser
+from django.conf import settings    
 
 class Attendance(models.Model):
     clerk = models.ForeignKey(ClerkProfile, on_delete=models.CASCADE, related_name="attendances")
@@ -34,3 +35,16 @@ class LeaveRequest(models.Model):
     reason = models.TextField()
     status = models.CharField(max_length=20, choices=[("Pending", "Pending"), ("Approved", "Approved"), ("Rejected", "Rejected")], default="Pending")
 
+class VideoCall(models.Model):
+    clerk = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="clerk_calls")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user_calls")
+    scheduled_time = models.DateTimeField()
+    meeting_link = models.URLField(blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.meeting_link:
+            self.meeting_link = f"https://meet.jit.si/{self.clerk.username}_{self.user.username}"
+        super().save(*args, **kwargs)
+
+    def _str_(self):
+        return f"{self.clerk} - {self.user} at {self.scheduled_time}"

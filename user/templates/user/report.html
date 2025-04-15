@@ -4,6 +4,13 @@
     <div class="row justify-content-center">
         <div class="col-lg-6 col-md-8 col-sm-10">
             <h2 class="text-center text-primary fw-bold mb-4">Complaint Registration</h2>
+                                {% if messages %}
+                        <div class="alert alert-success">
+                            {% for message in messages %}
+                                <p>{{ message }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
             <div class="card shadow-lg p-4 border-0 rounded-4">
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
@@ -26,7 +33,7 @@
                         <input type="number" class="form-control shadow-sm" id="ward" name="ward" placeholder="Enter Ward Number" required>
                     </div>
 
-                    <div class="mb-3">
+                    {% comment %} <div class="mb-3">
                         <label for="name" class="form-label fw-bold">Full Name</label>
                         <input type="text" class="form-control shadow-sm" id="name" name="name" placeholder="Enter Your Name" required>
                     </div>
@@ -34,7 +41,7 @@
                     <div class="mb-3">
                         <label for="phone" class="form-label fw-bold">Phone Number</label>
                         <input type="tel" class="form-control shadow-sm" id="phone" name="phone" placeholder="Enter Your Phone Number" required pattern="[0-9]{10}">
-                    </div>
+                    </div> {% endcomment %}
 
                     <div class="mb-3">
                         <label for="image" class="form-label fw-bold">Upload Image (Optional)</label>

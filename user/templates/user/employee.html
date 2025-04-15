@@ -1,4 +1,6 @@
 {% extends "user/base.html" %}
+{% load static %}
+
 {% block content %}
 <div class="container py-5 bg-light">
     <div class="text-center mx-auto pb-5 wow fadeInUp" data-wow-delay="0.2s" style="max-width: 800px;">
@@ -9,42 +11,24 @@
         </p>
     </div>
     <div class="row gy-4">
-        <div class="col-md-6 col-lg-3 wow fadeInUp" data-wow-delay="0.2s">
+        {% for emp in employees %}
+        <div class="col-md-6 col-lg-3 wow fadeInUp" data-wow-delay="{{ forloop.counter0|add:'0.2' }}s">
             <div class="card border-0 shadow-lg text-center">
-                <img src="img/team-1.jpg" class="card-img-top rounded-top" alt="Panchayat Secretary">
+                {% if emp.role == "engineer" and emp.engineer_profile.profile_image %}
+                    <img src="{{ emp.engineer_profile.profile_image.url }}" class="card-img-top rounded-top" alt="{{ emp.role }}">
+                {% elif emp.role == "clerk" and emp.clerk_profile.profile_image %}
+                    <img src="{{ emp.clerk_profile.profile_image.url }}" class="card-img-top rounded-top" alt="{{ emp.role }}">
+                {% else %}
+                    <img src="{% static 'img/default-profile.png' %}" class="card-img-top rounded-top" alt="{{ emp.role }}">
+                {% endif %}
                 <div class="card-body">
-                    <h5 class="fw-bold">Panchayat Secretary</h5>
-                    <p class="text-muted">Oversees governance, administration, and service implementation.</p>
+                    <h5 class="fw-bold text-capitalize">{{ emp.role }}</h5>
+                    <p class="text-muted">{{ emp.username }}</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-6 col-lg-3 wow fadeInUp" data-wow-delay="0.4s">
-            <div class="card border-0 shadow-lg text-center">
-                <img src="img/team-2.jpg" class="card-img-top rounded-top" alt="Revenue Officer">
-                <div class="card-body">
-                    <h5 class="fw-bold">Revenue Officer</h5>
-                    <p class="text-muted">Handles tax collection and land revenue management.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6 col-lg-3 wow fadeInUp" data-wow-delay="0.6s">
-            <div class="card border-0 shadow-lg text-center">
-                <img src="img/team-3.jpg" class="card-img-top rounded-top" alt="Surveyor">
-                <div class="card-body">
-                    <h5 class="fw-bold">Surveyor</h5>
-                    <p class="text-muted">Ensures accurate land records and property boundaries.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6 col-lg-3 wow fadeInUp" data-wow-delay="0.8s">
-            <div class="card border-0 shadow-lg text-center">
-                <img src="img/team-4.jpg" class="card-img-top rounded-top" alt="Public Relations Officer">
-                <div class="card-body">
-                    <h5 class="fw-bold">Public Relations Officer</h5>
-                    <p class="text-muted">Manages citizen queries and service accessibility.</p>
-                </div>
-            </div>
-        </div>
+        {% endfor %}
+    </div>
     </div>
 </div>
     

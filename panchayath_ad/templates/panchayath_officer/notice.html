@@ -6,41 +6,41 @@
 <div class="container-fluid mt-4"> <!-- Added mt-4 for spacing -->
     <h2 class="text-center mb-4">Publish Notice</h2>
     
-    <div class="card p-4">
-        <form id="noticeForm">
-            <div class="mb-3">
-                <label for="noticeTitle" class="form-label">Title</label>
-                <input type="text" class="form-control" id="noticeTitle" placeholder="Enter notice title" required>
-            </div>
-            
-            <div class="mb-3">
-                <label for="noticeDescription" class="form-label">Description</label>
-                <textarea class="form-control" id="noticeDescription" rows="4" placeholder="Enter notice details" required></textarea>
-            </div>
-            
-            <div class="mb-3">
-                <label for="noticeImage" class="form-label">Upload Image</label>
-                <input type="file" class="form-control" id="noticeImage" accept="image/*">
-            </div>
-            
-            <div class="mb-3">
-                <label for="noticeRecipient" class="form-label">Send To</label>
-                <select class="form-control" id="noticeRecipient" required>
-                    <option value="public">Public</option>
-                    <option value="clerks">Clerks</option>
-                    <option value="engineers">Engineers</option>
-                    <option value="everyone">Everyone</option>
-                </select>
-            </div>
-            
-            <div class="mb-3">
-                <label for="noticeDate" class="form-label">Date</label>
-                <input type="date" class="form-control" id="noticeDate" required>
-            </div>
-            
-            <button type="submit" class="btn btn-primary">Publish Notice</button>
-        </form>
-    </div>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input type="text" name="title" class="form-control" required>
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control" rows="4" required></textarea>
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Upload Image</label>
+            <input type="file" name="image" class="form-control" accept="image/*">
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Send To</label>
+            <select name="recipient" class="form-control" required>
+                <option value="public">Public</option>
+                <option value="clerks">Clerks</option>
+                <option value="engineers">Engineers</option>
+                <option value="everyone">Everyone</option>
+            </select>
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Date</label>
+            <input type="date" name="date" class="form-control" required>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Publish Notice</button>
+    </form>
+    
 </div>
 
 <script>

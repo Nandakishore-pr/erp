@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 
+import firebase_admin
+from firebase_admin import credentials, messaging,firestore
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -150,3 +153,11 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 STRIPE_SECRET_KEY = "sk_test_51R4kZCBFjnvExNSEnABk3rpoQ0X4KcvtDfdRfX4ggxfyRn3xseaWfDFpYU7j4CWTOkM8wbjJGi2048kIDc4HexzL00vrMJmv4K"
 STRIPE_PUBLIC_KEY = "pk_test_51R4kZCBFjnvExNSEuqjWufT8Fgo4Si4Iyo0sWo4dQ6mFQD9XF6ZM6EVzt1GhubkAgri4Uwx1lOo7M0JOgVjdQzUb00F6nqGBTY"
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FIREBASE_CREDENTIALS_PATH = os.path.join(BASE_DIR, "service-account.json")
+ 
+cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
+firebase_app = firebase_admin.initialize_app(cred)
+
+db = firestore.client()
