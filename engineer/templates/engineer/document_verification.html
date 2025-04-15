@@ -19,7 +19,6 @@
                         <th>📄 Document</th>
                         <th>⚡ Action</th>
                         <th>📊 Status</th>
-                        <th>💬 Chat</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -45,9 +44,6 @@
                             <span id="status-{{ document.id }}" class="badge {% if document.status %}bg-success{% else %}bg-warning text-dark{% endif %}">
                                 {% if document.status %} ✅ Approved {% else %} ⏳ Pending {% endif %}
                             </span>
-                        </td>
-                        <td>
-                            <button class="btn btn-info btn-sm px-3 rounded-pill" onclick="openChat('Building Plan')">💬 Chat</button>
                         </td>
                     </tr>
                     {% endfor %}
@@ -120,24 +116,4 @@
 
 
 
-
-<script>
-    function openChat(docTitle) {
-        document.getElementById("docTitle").innerText = docTitle;
-        let chatBox = document.getElementById("chatBox");
-        chatBox.innerHTML = "<p class='text-muted text-center'>Fetching chat history...</p>";
-        new bootstrap.Modal(document.getElementById("chatModal")).show();
-    }
-    
-    function sendMessage() {
-        let input = document.getElementById("chatInput");
-        let message = input.value.trim();
-        if (message) {
-            let chatBox = document.getElementById("chatBox");
-            chatBox.innerHTML += `<div class='text-end'><p class='bg-light p-2 rounded shadow-sm'>${message}</p></div>`;
-            input.value = "";
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-    }
-</script>
 {% endblock content %}

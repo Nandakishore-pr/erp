@@ -25,7 +25,8 @@ urlpatterns = [
     path('engineer/',include("engineer.urls")),
     path('clerk/', include("clerk.urls")),
     path('ad/',include("panchayath_ad.urls")),
-    path('auth/',include("common.urls"))
+    path('auth/',include("common.urls")),
+    path('chat/', include('chat.urls')),
 ]
 
 

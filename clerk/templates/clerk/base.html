@@ -154,6 +154,9 @@
         <a href="{% url 'document' %}" class="{% if request.path == '/clerk/document/' %}active{% endif %}">
             <i class="fas fa-file"></i> Documents
         </a>
+        <a href="{% url 'document-sug' %}" >
+            <i class="fas fa-file"></i> Documents Suggestion
+        </a>
         <a href="{% url 'attendance' %}" class="{% if request.path == '/clerk/attendance/' %}active{% endif %}">
             <i class="fas fa-calendar-check"></i> Attendance
         </a>

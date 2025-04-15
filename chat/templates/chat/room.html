@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Room</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #chat-log { height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; }
+        #chat-input { width: 100%; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Chat Room: {{ room_name }}</h1>
+    <div id="chat-log">
+        <!-- Display existing messages -->
+        {% for message in messages %}
+        <p><strong>{{ message.sender.username }}:</strong> {{ message.message }}</p>
+        {% endfor %}
+    </div>
+    <input id="chat-input" type="text" placeholder="Type a message..." />
+    <button id="send-btn">Send</button>
+
+    <!-- Include Pusher JS Library -->
+    <script src="https://js.pusher.com/8.0/pusher.min.js"></script>
+    <script>
+        const roomName = "{{ room_name }}";
+        const username = "{{ username }}"; // Pass the username from Django context
+
+        // Initialize Pusher
+        const pusher = new Pusher('9815c772593211e4428f', {
+            cluster: 'ap2',
+            encrypted: true
+        });
+
+        // Subscribe to the chat channel
+        const channel = pusher.subscribe(`chat-${roomName}`);
+
+        // Listen for new messages
+        channel.bind('new_message', function(data) {
+            const chatLog = document.getElementById('chat-log');
+            chatLog.innerHTML += `<p><strong>${data.sender}:</strong> ${data.message}</p>`;
+        });
+
+        // Send a message via AJAX
+        document.getElementById('send-btn').addEventListener('click', () => {
+            const message = document.getElementById('chat-input').value;
+            fetch('/chat/send-message/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    room: roomName,
+                    message: message,
+                    sender: username
+                })
+            }).then(response => response.json())
+              .then(data => {
+                  console.log(data);
+                  document.getElementById('chat-input').value = ''; // Clear input
+              });
+        });
+    </script>
+</body>
+</html>

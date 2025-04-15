@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'clerk',
     'panchayath_ad',
     'common',
-    
+    'chat'
 ]
 
 MIDDLEWARE = [
@@ -78,7 +78,13 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'panchyath_management_system.wsgi.application'
+ASGI_APPLICATION = 'panchyath_management_system.asgi.application'
 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -143,6 +149,7 @@ AUTH_USER_MODEL = 'common.CustomUser'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+<<<<<<< HEAD
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
@@ -161,3 +168,10 @@ cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
 firebase_app = firebase_admin.initialize_app(cred)
 
 db = firestore.client()
+=======
+
+PUSHER_APP_ID = '1971627'
+PUSHER_KEY = '9815c772593211e4428f'
+PUSHER_SECRET = '576a44b59445a4f852ba'
+PUSHER_CLUSTER = 'ap2'
+>>>>>>> video_and_chat

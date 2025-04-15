@@ -1,11 +1,21 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,  get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from .forms import EngineerRegistrationForm, UserRegistrationForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
-from .models import EngineerProfile
+from .models import EngineerProfile,Message,CustomUser
 from django.core.exceptions import ValidationError
+import time
+import json
+from django.http import StreamingHttpResponse, JsonResponse
+from django.contrib.auth import get_user_model
+from django.views.decorators.csrf import csrf_exempt
+from .models import Message
+from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 
+
+User = get_user_model()
 
 def user_register(request):
     if request.method == 'POST':
@@ -81,6 +91,8 @@ def redirect_dashboard(user):
         'user': 'home',
     }
     return redirect(role_dashboard_mapping.get(user.role, 'user_dashboard'))
+
+
 def logout_view(request):
     logout(request)
     return redirect('home')
